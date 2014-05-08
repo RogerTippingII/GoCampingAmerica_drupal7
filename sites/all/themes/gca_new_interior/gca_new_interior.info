@@ -1,0 +1,24 @@
+name = GCA New (Interior Pages)
+description = GCA New is the template for the 9/2011 redesign.
+core = 7.x
+
+stylesheets[all][] = style.css
+scripts[] = script.js
+
+regions[full] = Full-width content
+regions[sidebar_first] = Left sidebar
+regions[sidebar_second] = Right sidebar
+regions[header] = Header
+regions[headerLeft] = Header left
+regions[headerRight] = Header right
+regions[contentTop] = Content top
+regions[content] = Content
+regions[navigation] = Navigation
+regions[footer] = Footer
+regions[footerLeft] = Footer left
+regions[footerRight] = Footer right
+regions[leaderboard] = Leaderboard
+regions[highlight] = Highlight
+regions[help] = Help
+
+

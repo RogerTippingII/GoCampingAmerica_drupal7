@@ -1,0 +1,213 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: patricepaquette
+ * Date: 2014-04-04
+ * Time: 10:18 PM
+ */
+
+function gca_search_block_info(){
+  $blocks['gca_search_main'] = array(
+    'info' => t('GCA Search Main'),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_search_full_width"] = array(
+    'info' => t('GCA Search Full Width'),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_search_park_search"] = array(
+    'info' => t("GCA Search Park search"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["home_ad_left"] = array(
+    'info' => t("GCA Homepage Left Ad"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["deals_block"] = array(
+    'info' => t("Deals Block"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_home_header_slideshow"] = array(
+    'info' => t("GCA Homepage Header Slideshow"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_home_search_widget"] = array(
+    'info' => t("GCA Homepage Search Widget"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_park_showcase"] = array(
+    'info' => t("GCA Park Showcase"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_main_header"] = array(
+    'info' => t("GCA Main Header"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_widget_random_content"] = array(
+    'info' => t("GCA Widget Random Content"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_widget_random_content_social"] = array(
+    'info' => t("GCA Widget Random Content Social"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_widget_small_search"] = array(
+    'info' => t("GCA Widget Small Search"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_widget_most_popular_articles"] = array(
+    'info' => t("GCA Widget Most Popular Articles"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_widget_featured_parks"] = array(
+    'info' => t("GCA Widget Featured Parks"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_widget_updated_posts"] = array(
+    'info' => t("GCA Widget Recently Updated Posts"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_ad_code_states"] = array(
+    'info' => t("GCA Ad Code States"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_search_mini_advanced"] = array(
+    'info' => t("GCA Search Mini Advanced"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_ad_code_states_leaderboard"] = array(
+    'info' => t("GCA Ad Code States Leaderboard"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["gca_ad_code_interests"] = array(
+    'info' => t("GCA Ad Code Interests"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  return $blocks;
+}
+
+function gca_search_block_view($delta = ''){
+  switch($delta){
+    case "gca_ad_code_interests":
+      ob_start();
+      require(__DIR__ . "/blocks/ad_code_interests.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_ad_code_states_leaderboard":
+      ob_start();
+      require(__DIR__ . "/blocks/ad_code_states_leaderboard.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_search_mini_advanced":
+      ob_start();
+      require(__DIR__ . "/gca_search_mini_advanced.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_ad_code_states":
+      ob_start();
+      require(__DIR__ . "/blocks/ad_code_states.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_widget_updated_posts":
+      ob_start();
+      require(__DIR__ . "/blocks/widget_recently_updated_posts.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_widget_featured_parks":
+      ob_start();
+      require(__DIR__ . "/blocks/widget_featured_parks.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_widget_most_popular_articles":
+      ob_start();
+      require(__DIR__ . "/blocks/widget_most_popular_articles.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_widget_small_search":
+      ob_start();
+      require(__DIR__ . "/blocks/widget_small_search.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_widget_random_content_social":
+      ob_start();
+      require(__DIR__ . "/blocks/widget_random_content_social.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_widget_random_content":
+      ob_start();
+      require(__DIR__ . "/blocks/widget_random_content.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_main_header":
+      ob_start();
+      require(__DIR__ . "/blocks/main_header.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_search_full_width":
+      ob_start();
+      require(__DIR__ . "/gca_search_full_width.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_search_main":
+      ob_start();
+      require(__DIR__ . "/gca_search_main.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_search_park_search":
+      ob_start();
+      require(__DIR__ . "/gca_search_park_name.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "home_ad_left":
+      ob_start();
+      require(__DIR__ . "/blocks/home_ad_left.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "deals_block":
+      ob_start();
+      require(__DIR__ . "/blocks/deals_block.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_home_header_slideshow":
+      ob_start();
+      require(__DIR__ . "/blocks/home_header_slideshow.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_home_search_widget":
+      ob_start();
+      require(__DIR__ . "/blocks/home_search_widget.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case "gca_park_showcase":
+      ob_start();
+      require(__DIR__ . "/blocks/park_showcase.php");
+      $block["content"] = ob_get_clean();
+      $block["subject"] = "Park Showcase";
+      return $block;
+  }
+}
+
+function gca_search_views_pre_render(&$view){
+//  drupal_add_js(__DIR__ . "/../../../../scripts/gca_jquery.js");
+//  drupal_add_js(__DIR__ . "/../../../../scripts/gca_jquery_front.js");
+}
+

@@ -1,0 +1,3 @@
+name = GoCampingAmerica Park Search
+Description = Module to search for parks
+core = 7.x

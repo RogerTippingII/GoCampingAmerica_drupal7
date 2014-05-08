@@ -1,0 +1,11 @@
+*
+
+!.gitignore
+!*/
+!scripts/*
+!scripts/gca-search/*
+!sites/all/gca-search/*
+!sites/all/themes/gca_new_300_ad/*
+!sites/all/themes/gca_new_300_ad_home/*
+!sites/all/themes/gca_new_interior/*
+!sites/all/modules/gca_search/*

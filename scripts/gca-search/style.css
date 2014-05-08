@@ -1,0 +1,37 @@
+
+#campsearch-details #info{
+    padding: 10px 10px 10px 10px;
+    width: 225px;
+}
+
+#campsearch-details #gmap{
+    width: 225px;
+}
+
+#campsearch-details ul.nav > li{
+    border: #D3D3D3 solid 1px;
+    border-bottom: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    background-color: #EFEFEF;
+    background: none;
+    font-size: 16px;
+
+}
+
+#campsearch-details ul.nav > li:hover{
+     background-color: #D3D3D3;
+ }
+
+#campsearch-details ul.nav > li > a:hover{
+    border: #D3D3D3 solid 1px;
+    background-color: #D3D3D3;
+}
+
+
+#campsearch-details ul.nav > li.tab-active{
+    background-color: #BF5600;
+    color: white;
+}
