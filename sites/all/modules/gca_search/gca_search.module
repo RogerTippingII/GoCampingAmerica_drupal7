@@ -102,11 +102,21 @@ function gca_search_block_info(){
     'cache' => DRUPAL_CACHE_PER_ROLE
   );
 
+  $blocks["gca_tumblr_link_list"] = array(
+    'info' => t("GCA Tumbler Link List"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
   return $blocks;
 }
 
 function gca_search_block_view($delta = ''){
   switch($delta){
+    case 'gca_tumblr_link_list':
+      ob_start();
+      require(__DIR__ . "/blocks/widget_tumbler_link_list.php");
+      $block["content"] = ob_get_clean();
+      return $block;
     case "gca_ad_code_interests":
       ob_start();
       require(__DIR__ . "/blocks/ad_code_interests.php");

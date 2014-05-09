@@ -8,4 +8,4 @@
 !sites/all/themes/gca_new_300_ad/*
 !sites/all/themes/gca_new_300_ad_home/*
 !sites/all/themes/gca_new_interior/*
-!sites/all/modules/gca_search/*
+!sites/all/modules/gca_search/**/*
