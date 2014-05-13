@@ -635,7 +635,8 @@ function showStateOverview($state) {
   $result = $query->execute();
 
   if(isset($result)){
-    $nid = array_keys($result["node"])[0];
+    $keys = array_keys($result["node"]);
+    $nid = $keys[0];
 
     $node = node_load($nid);
 
@@ -660,7 +661,8 @@ function showAttractions($state) {
   $result = $query->execute();
 
   if(isset($result)){
-    $nid = array_keys($result["node"])[0];
+    $keys = array_keys($result["node"]);
+    $nid = $keys[0];
 
     $node = node_load($nid);
 
@@ -684,7 +686,8 @@ function showRules($state) {
   $result = $query->execute();
 
   if(isset($result)){
-    $nid = array_keys($result["node"])[0];
+    $keys = array_keys($result["node"]);
+    $nid = $keys[0];
 
     $node = node_load($nid);
 
@@ -708,7 +711,8 @@ function showLinks($state) {
   $result = $query->execute();
 
   if(isset($result)){
-    $nid = array_keys($result["node"])[0];
+    $keys = array_keys($result["node"]);
+    $nid = $keys[0];
 
     $node = node_load($nid);
 
@@ -774,7 +778,8 @@ function getHeaderImg($state) {
   $result = $query->execute();
 
   if(isset($result)){
-    $nid = array_keys($result["node"])[0];
+    $keys = array_keys($result["node"]);
+    $nid = $keys[0];
 
     $node = node_load($nid);
 

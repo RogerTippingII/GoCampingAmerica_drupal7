@@ -236,7 +236,7 @@ $gca(document).ready(function () {
                 $gca("#loading").show();
                 //var park = $gca('#search-park').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+");
                 var park = escape($gca('#search-park').val());
-                var urlString = "/park-search?p=" + park + " #search-results";
+                var urlString = "/scripts/search_park_name.php?p=" + park + " #search-results";
                 //alert(urlString);
                 $gca('#gca-search-results').load(urlString,function () {
                     $gca("#gca-search-throbber").hide();
@@ -261,7 +261,7 @@ $gca(document).ready(function () {
             if (!$gca('#mini-advanced-search-widget #search-park').val()) {
                 alert("Please enter a park name or keyword.x");
             } else {
-                var urlString = "/test/findpark?fap=1&p=" + $gca('#mini-advanced-search-widget #search-park').val() + "&o=p#search-area";
+                var urlString = "/findpark?fap=1&p=" + $gca('#mini-advanced-search-widget #search-park').val() + "&o=p#search-area";
                 _gaq.push(['_trackEvent', 'Buttons', 'Clicked', 'Search by Park Name', , false]);
                 window.location = urlString;
             }
@@ -286,10 +286,10 @@ $gca(document).ready(function () {
             $gca("#loading").show();
             //var park = $gca('#advanced-search-widget #search-park').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+");
             var park = escape($gca('#advanced-search-widget #search-park').val());
-            var urlString = "/park-search?p=" + park + " #search-results";
+            var urlString = "/scripts/search_park_name.php?p=" + park + " #search-results";
             $gca("#state-start, #state-start-intro").hide();
             _gaq.push(['_trackEvent', 'Buttons', 'Clicked', 'Search by Park Name', , false]);
-            window.history.pushState("", "", urlString);
+            //window.history.pushState("", "", urlString);
             $gca('#gca-search-results').load(urlString,function () {
                 $gca("#gca-search-throbber").hide();
                 $gca("#loading").hide();
@@ -556,7 +556,7 @@ $gca(document).ready(function () {
             $gca("#loading").show();
         }
         // var locvalue = $gca('#search-location').attr("value");
-        var urlString = "/test/findpark?fap=1&l=" + $gca('#search-location').val() + "&r=" + $gca('#search-distance').val() + "&t="+ $gca('#gca-search-terms').html() +"&o=l#search-area";
+        var urlString = "/findpark?fap=1&l=" + $gca('#search-location').val() + "&r=" + $gca('#search-distance').val() + "&t="+ $gca('#gca-search-terms').html() +"&o=l#search-area";
         window.history.pushState({}, "", urlString);
 
         $gca(window).trigger('GCASearchInitiated', {
