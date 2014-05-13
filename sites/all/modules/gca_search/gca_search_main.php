@@ -626,10 +626,22 @@ function setNav($id, $state, $districtType) { ?>
 <?php }
 
 function showStateOverview($state) {
-  $query = db_query("SELECT s.field_state_overview_value FROM {node} n, {content_type_state} s WHERE n.nid = s.nid AND n.type = 'state' AND n.title = '%s'", $state);
-  while ($row = db_fetch_object($query)) {
-    $overview = $row->field_state_overview_value;
+  $query =new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'state')
+    ->entityCondition('title', $state)
+    ->range(0, 1);
+
+  $result = $query->execute();
+
+  if(isset($result)){
+    $nid = array_keys($result["node"])[0];
+
+    $node = node_load($nid);
+
+    $overview = $node->field_state_overview[LANGUAGE_NONE][0]["value"];
   }
+
   if ($overview) {
     echo $overview;
   } else {
@@ -638,10 +650,23 @@ function showStateOverview($state) {
 }
 
 function showAttractions($state) {
-  $query = db_query("SELECT s.field_state_attractions_value FROM {node} n, {content_type_state} s WHERE n.nid = s.nid AND n.type = 'state' AND n.title = '%s'", $state);
-  while ($row = db_fetch_object($query)) {
-    $attractions = $row->field_state_attractions_value;
+
+  $query =new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'state')
+    ->entityCondition('title', $state)
+    ->range(0, 1);
+
+  $result = $query->execute();
+
+  if(isset($result)){
+    $nid = array_keys($result["node"])[0];
+
+    $node = node_load($nid);
+
+    $attractions = $node->field_state_attractions[LANGUAGE_NONE][0]["value"];
   }
+
   if ($attractions) {
     echo $attractions;
   } else {
@@ -650,10 +675,22 @@ function showAttractions($state) {
 }
 
 function showRules($state) {
-  $query = db_query("SELECT s.field_state_rules_value FROM {node} n, {content_type_state} s WHERE n.nid = s.nid AND n.type = 'state' AND n.title = '%s'", $state);
-  while ($row = db_fetch_object($query)) {
-    $rules = $row->field_state_rules_value;
+  $query =new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'state')
+    ->entityCondition('title', $state)
+    ->range(0, 1);
+
+  $result = $query->execute();
+
+  if(isset($result)){
+    $nid = array_keys($result["node"])[0];
+
+    $node = node_load($nid);
+
+    $rules = $node->field_state_rules[LANGUAGE_NONE][0]["value"];
   }
+
   if ($rules) {
     echo $rules;
   } else {
@@ -662,10 +699,22 @@ function showRules($state) {
 }
 
 function showLinks($state) {
-  $query = db_query("SELECT s.field_state_useful_value FROM {node} n, {content_type_state} s WHERE n.nid = s.nid AND n.type = 'state' AND n.title = '%s'", $state);
-  while ($row = db_fetch_object($query)) {
-    $useful = $row->field_state_useful_value;
+  $query =new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'state')
+    ->entityCondition('title', $state)
+    ->range(0, 1);
+
+  $result = $query->execute();
+
+  if(isset($result)){
+    $nid = array_keys($result["node"])[0];
+
+    $node = node_load($nid);
+
+    $useful = $node->field_state_useful[LANGUAGE_NONE][0]["value"];
   }
+
   if ($useful) {
     echo $useful;
   } else {
@@ -716,23 +765,53 @@ function getDistrictType($state) {
 }
 
 function getHeaderImg($state) {
-  $query = db_query("SELECT f.filepath FROM {files} f, {node} n, {content_type_state} s WHERE n.nid = s.nid AND s.field_state_header_image_fid = f.fid AND n.title = '%s' LIMIT 1", $state);
-  while ($row = db_fetch_object($query)) {
-    return $row->filepath;
+  $query =new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'state')
+    ->entityCondition('title', $state)
+    ->range(0, 1);
+
+  $result = $query->execute();
+
+  if(isset($result)){
+    $nid = array_keys($result["node"])[0];
+
+    $node = node_load($nid);
+
+    return $node->field_state_header_image[LANGUAGE_NONE][0]["filename"];
   }
 }
 
 function listStateParks($stateAbbrev) {
-  $query = db_query("SELECT DISTINCT n.nid, n.title, l.city, l.province FROM {node} n, {location} l, {location_instance} li, {content_type_camp} c WHERE n.vid = li.vid AND n.vid = c.vid AND li.lid = l.lid AND n.type = 'camp' AND li.genid LIKE '%%field_location%%' AND l.province = '%s' AND c.field_camp_status_value = 'Active' ORDER BY n.title ASC", $stateAbbrev);
+  $camps = array();
+
+  $query = db_query("
+    SELECT node.nid
+    FROM node
+    JOIN content_field_location cfl ON cfl.vid = node.vid
+    JOIN location l ON l.lid = cfl.field_location_lid
+    WHERE node.type = 'camp' AND l.province = :state",
+    array(":state" => $stateAbbrev)
+  );
+
+
+  $nids = array();
+  while($row = $query->fetchObject()){
+    $nids[] = (int)$row->nid;
+  }
+
+
+  if(count($nids) > 0){
+    $camps = entity_load('node', $nids);
+  }
+
   $x = 0;
-  while ($row = db_fetch_object($query)) {
-    if (isLatest($row->nid)) {
-      $result[$x]["nid"] = $row->nid;
-      $result[$x]["title"] = $row->title;
-      $result[$x]["city"] = $row->city;
-      $result[$x]["state"] = $row->province;
-      $x++;
-    }
+  foreach($camps as $nid => $camp){
+    $result[$x]["nid"] = $nid;
+    $result[$x]["title"] = $camp->title;
+    $result[$x]["city"] = $camp->field_location[LANGUAGE_NONE][0]["city"];
+    $result[$x]["state"] = $camp->field_location[LANGUAGE_NONE][0]["province"];
+    $x++;
   }
   return $result;
 }
@@ -811,8 +890,8 @@ function checkVid($nid) {
 
 function getResultAlias($nid) {
   $target = "node/" . $nid;
-  $query = db_query("SELECT dst FROM {url_alias} WHERE src ='%s'", $target);
-  while ($row = db_fetch_object($query)) {
+  $query = db_query("SELECT alias FROM {url_alias} WHERE source =:target", array('target' => $target));
+  while ($row = $query->fetchObject()) {
     $result = $row->dst;
   }
   if (!$result) {
@@ -929,27 +1008,26 @@ function showStateTabs() { ?>
 <?php }
 
 function checkForDeal($nid) {
-  $query = db_query("SELECT field_park_state_assn_optin_value, field_camp_state_assnid_value FROM {content_type_camp} WHERE nid = %d ORDER BY vid DESC LIMIT 1", $nid);
-  while ($row = db_fetch_array($query)) {
-    // Check whether the park is opted in for state association deals
-    if ($row["field_park_state_assn_optin_value"] == "on") {
+  $camp = node_load($nid);
 
-      // Check whether the state association has an active deal
-      $assnDeal = checkAssnDeal($row["field_camp_state_assnid_value"]);
-      if ($assnDeal == 1) {
-        return 1;
-      }
+  if ($camp->field_park_state_assn_optin[LANGUAGE_NONE][0]["value"] = "on") {
+
+    // Check whether the state association has an active deal
+    $assnDeal = checkAssnDeal($camp->field_camp_state_assnid[LANGUAGE_NONE][0]["value"]);
+    if ($assnDeal == 1) {
+      return 1;
     }
   }
+
   return 0;
 }
 
 function checkAssnDeal($assnID) {
   //echo "<span style='color:#ccc;font-size:0.7em;'> cad</span>";
   $userID = getUserID($assnID);
-  $query = db_query("SELECT nid FROM {node} WHERE type = 'deal' AND uid = %d", $userID);
+  $query = db_query("SELECT nid FROM {node} WHERE type = 'deal' AND uid = :uid", array('uid' => $userID));
   $result = 0;
-  while ($row = db_fetch_array($query)) {
+  while ($row = $query->fetchAssoc()) {
     //echo "<span style='color:#ccc;font-size:0.7em;'> dl</span>";
     $times = getTimes($row["nid"]);
     //echo "<span style='color:#ccc;font-size:0.7em;'> " . $row['nid'] . " </span>";
@@ -976,8 +1054,8 @@ function getTimes($nid) {
 }
 
 function getUserID($name) {
-  $query = db_query("SELECT uid FROM {users} WHERE name = '%s' LIMIT 1", $name);
-  while ($row = db_fetch_array($query)) {
+  $query = db_query("SELECT uid FROM {users} WHERE name = :name LIMIT 1", array('name' => $name));
+  while ($row = $query->fetchAssoc()) {
     $result = $row["uid"];
   }
   return $result;
