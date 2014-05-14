@@ -1,4 +1,17 @@
 <script type="text/javascript">
+
+	function getgeocodeaddition() {
+	  var geocodeaddition = "";
+	  var tlocation = jQuery('#search-location-widget').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+");
+		if (tlocation != '') {
+			getCoordinates(tlocation);
+		  if (coordinates_lat != null && coordinates_lng != null) {
+		  	geocodeaddition = "&geocode_lat=" + coordinates_lat + "&geocode_lng=" + coordinates_lng;
+		  }
+		}
+		return geocodeaddition;
+	}
+	
   $gca(document).ready(function() {
 // Find a Park search
 
@@ -6,7 +19,8 @@
       if(!$gca('#search-location-widget').val()) {
         alert("Please enter a location.");
       } else {
-        var urlString = "/findpark?fap=1&l=" + $gca('#search-location-widget').val() + "&r=" + $gca('#search-distance').val() + "&o=l#search-area";
+      	geocodeaddition = getgeocodeaddition();
+        var urlString = "/findpark?fap=1&l=" + $gca('#search-location-widget').val() + "&r=" + $gca('#search-distance').val() + "&o=l" + geocodeaddition + "#search-area";
         _gaq.push(['_trackEvent', 'Buttons', 'Widget Search Button', 'Clicked',, false]);
         window.location = urlString;
       }
@@ -14,7 +28,8 @@
 
     $gca(".fap-search-box-widget").click(function() {
       if ($gca("#search-location-widget").val()) {
-        var urlString = "/findpark?fap=1&l=" + $gca('#search-location-widget').val() + "&r=" + $gca('#search-distance').val() + "&o=l#search-area";
+      	geocodeaddition = getgeocodeaddition();
+        var urlString = "/findpark?fap=1&l=" + $gca('#search-location-widget').val() + "&r=" + $gca('#search-distance').val() + "&o=l" + geocodeaddition + "#search-area";
         _gaq.push(['_trackEvent', 'Buttons', 'Widget Search Button', 'Clicked',, false]);
         window.location = urlString;
       } else if ($gca("#search-location-park-widget").val()) {
@@ -44,7 +59,8 @@
         if(!$gca('#search-location-widget').val()) {
           alert("Please enter a location.");
         } else {
-          var urlString = "/findpark?fap=1&l=" + $gca('#search-location-widget').val() + "&r=" + $gca('#search-distance').val() + "&o=l#search-area";
+        	geocodeaddition = getgeocodeaddition();
+          var urlString = "/findpark?fap=1&l=" + $gca('#search-location-widget').val() + "&r=" + $gca('#search-distance').val() + "&o=l" + geocodeaddition + "#search-area";
           _gaq.push(['_trackEvent', 'Buttons', 'Widget Search Button', 'Clicked',, false]);
           window.location = urlString;
           return false;
@@ -59,7 +75,8 @@
       if (keycode == 13) { // keycode for enter key
         // force the 'Enter Key' to implicitly click the Update button
         if ($gca("#search-location-widget").val()) {
-          var urlString = "/findpark?fap=1&l=" + $gca('#search-location-widget').val() + "&r=" + $gca('#search-distance').val() + "&o=l#search-area";
+        	geocodeaddition = getgeocodeaddition();
+          var urlString = "/findpark?fap=1&l=" + $gca('#search-location-widget').val() + "&r=" + $gca('#search-distance').val() + "&o=l" + geocodeaddition + "#search-area";
           _gaq.push(['_trackEvent', 'Buttons', 'Widget Search Button', 'Clicked',, false]);
           window.location = urlString;
         } else if ($gca("#search-location-park-widget").val()) {
