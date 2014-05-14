@@ -1,3 +1,6 @@
+var coordinates_lat = null;
+var coordinates_lng = null;
+
 var $gca = jQuery.noConflict();
 $gca(document).ready(function () {
     // Remove text from user login submit button so it doesn't show through the image
@@ -31,14 +34,14 @@ $gca(document).ready(function () {
         $gca('.asw-center-tab').removeClass("active");
         $gca(this).addClass("active");
         $gca('.filter-wrapper').hide();
-        $gca($gca(this).attr("rel")).show();
+        $gca($(this).attr("rel")).show();
     });
 
     $gca('#mini-advanced-search-widget .asw-center-tab').live("click", function () {
         $gca('#mini-advanced-search-widget .asw-center-tab').removeClass("active");
         $gca(this).addClass("active");
         $gca('#mini-advanced-search-widget .filter-wrapper').hide();
-        $gca($gca(this).attr("rel")).show();
+        $gca($(this).attr("rel")).show();
     });
 
     // Video Contest Submission playlist page
@@ -54,12 +57,12 @@ $gca(document).ready(function () {
 
     $gca('.search-tab').click(function () {
         $gca('.filter-div').addClass('hide');
-        $gca($gca(this).attr("rel")).removeClass('hide');
+        $gca($(this).attr("rel")).removeClass('hide');
         $gca('.search-li').removeClass('tabs-active');
         $gca('.search-li').addClass('tabs-default');
-        $gca($gca(this).parent()).removeClass('tabs-default');
-        $gca($gca(this).parent()).addClass('tabs-active');
-        $gca($gca(this).attr("rel")).scrollbar();
+        $gca($(this).parent()).removeClass('tabs-default');
+        $gca($(this).parent()).addClass('tabs-active');
+        $gca($(this).attr("rel")).scrollbar();
     });
 
     $gca('#gca-search-header-tabs a').click(function () {
@@ -147,7 +150,7 @@ $gca(document).ready(function () {
         if (!$gca('#mini-advanced-search-widget #search-park').val()) {
             alert("Please enter a park name or keyword.x");
         } else {
-            var urlString = "/test/findpark?fap=1&p=" + $gca('#mini-advanced-search-widget #search-park').val() + "&o=p#search-area";
+            var urlString = "/findpark?fap=1&p=" + $gca('#mini-advanced-search-widget #search-park').val() + "&o=p#search-area";
             _gaq.push(['_trackEvent', 'Buttons', 'Clicked', 'Search by Park Name', , false]);
             window.location = urlString;
         }
@@ -236,7 +239,7 @@ $gca(document).ready(function () {
                 $gca("#loading").show();
                 //var park = $gca('#search-park').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+");
                 var park = escape($gca('#search-park').val());
-                var urlString = "/scripts/search_park_name.php?p=" + park + " #search-results";
+                var urlString = "/park-search?p=" + park + " #search-results";
                 //alert(urlString);
                 $gca('#gca-search-results').load(urlString,function () {
                     $gca("#gca-search-throbber").hide();
@@ -286,10 +289,10 @@ $gca(document).ready(function () {
             $gca("#loading").show();
             //var park = $gca('#advanced-search-widget #search-park').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+");
             var park = escape($gca('#advanced-search-widget #search-park').val());
-            var urlString = "/scripts/search_park_name.php?p=" + park + " #search-results";
+            var urlString = "/park-search?p=" + park + " #search-results";
             $gca("#state-start, #state-start-intro").hide();
             _gaq.push(['_trackEvent', 'Buttons', 'Clicked', 'Search by Park Name', , false]);
-            //window.history.pushState("", "", urlString);
+            window.history.pushState("", "", urlString);
             $gca('#gca-search-results').load(urlString,function () {
                 $gca("#gca-search-throbber").hide();
                 $gca("#loading").hide();
@@ -331,7 +334,7 @@ $gca(document).ready(function () {
         if (!$gca('#search-location').val()) {
             alert("Please enter a location.");
         } else {
-            var urlString = "/test/findpark#search-top?fap=1&l=" + $gca('#search-location').val() + "&r=" + $gca('#search-distance').val() + "&o=l";
+            var urlString = "/findpark#search-top?fap=1&l=" + $gca('#search-location').val() + "&r=" + $gca('#search-distance').val() + "&o=l";
             _gaq.push(['_trackEvent', 'Buttons', 'Clicked', 'Find Park Search Button', , false]);
             window.location = urlString;
         }
@@ -341,7 +344,7 @@ $gca(document).ready(function () {
         if (!$gca('#advanced-search-widget #fap-search-park').val()) {
             alert("Please enter a park name or keyword.");
         } else {
-            var urlString = "/test/findpark?fap=1&p=" + $gca('#advanced-search-widget #fap-search-park').val() + "&o=p" + "#search-area";
+            var urlString = "/findpark?fap=1&p=" + $gca('#advanced-search-widget #fap-search-park').val() + "&o=p" + "#search-area";
             //alert(urlString);
             _gaq.push(['_trackEvent', 'Buttons', 'Clicked', 'Search by Park Name', , false]);
             window.location = urlString;
@@ -556,11 +559,17 @@ $gca(document).ready(function () {
             $gca("#loading").show();
         }
         // var locvalue = $gca('#search-location').attr("value");
-        var urlString = "/findpark?fap=1&l=" + $gca('#search-location').val() + "&r=" + $gca('#search-distance').val() + "&t="+ $gca('#gca-search-terms').html() +"&o=l#search-area";
-        window.history.pushState({}, "", urlString);
 
-        $gca(window).trigger('GCASearchInitiated', {
-            terms: $gca("#gca-search-terms").html(),
+	      var tlocation = $gca('#search-location').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+");
+				getCoordinates(tlocation);
+
+			  var geocodeaddition = "";
+			  if (coordinates_lat != null && coordinates_lng != null) {
+			  	geocodeaddition = "&geocode_lat=" + coordinates_lat + "&geocode_lng=" + coordinates_lng;
+			  }
+        var urlString = "/findpark?fap=1&l=" + $gca('#search-location').val() + "&r=" + $gca('#search-distance').val() + "&t="+ $gca('#gca-search-terms').html() +"&o=l" + geocodeaddition + "#search-area";
+        window.history.pushState({}, "", urlString);
+        $(window).trigger('GCASearch.searchInitiated', {
             location: $gca('#search-location').val(),
             radius: $gca('#search-distance').val(),
             searchType: searchType
@@ -574,3 +583,24 @@ $gca(document).ready(function () {
         $gca('#page-subtitle').html($gca('#state-name').html());
     }
 });
+
+function getCoordinates(address) {
+
+	var jsonreply = jQuery.ajax({
+	        type: "GET",
+	        url: "http://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&sensor=false",
+	        async: false
+	    }).responseText;	
+
+	var coordinates = jQuery.parseJSON(jsonreply);
+	var ret = new Array();
+	
+	if (coordinates.status == 'OK') {
+		coordinates_lat = coordinates.results[0].geometry.location.lat;
+		coordinates_lng = coordinates.results[0].geometry.location.lng;
+	} else {
+		coordinates_lat = null;
+		coordinates_lng = null;
+	}
+
+}
