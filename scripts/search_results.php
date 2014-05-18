@@ -362,7 +362,7 @@ function getParksGeo($loc, $radius, $optin, $testing)
         }
         $result[$nid]["extended_stay"] = $extended;
       }
-      //}
+      ////}
 
     }
   }
