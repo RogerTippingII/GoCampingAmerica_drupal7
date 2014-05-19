@@ -66,7 +66,8 @@
 <?php
 
 function getLandmarks() {
-  $query = db_query("SELECT n.nid, n.title, ctl.field_landmark_latitude_value as latitude, ctl.field_landmark_longitude_value as longitude FROM {node} n, {content_type_landmarks} ctl WHERE n.nid = ctl.nid AND n.type = 'landmarks' AND n.status = 1 ORDER BY n.title ASC");
+//  $query = db_query("SELECT n.nid, n.title, ctl.field_landmark_latitude_value as latitude, ctl.field_landmark_longitude_value as longitude FROM {node} n, {content_type_landmarks} ctl WHERE n.nid = ctl.nid AND n.type = 'landmarks' AND n.status = 1 ORDER BY n.title ASC");
+	$query = db_query("SELECT n.nid, n.title, ctllat.field_landmark_latitude_value as latitude, ctllng.field_landmark_longitude_value as longitude FROM {node} n JOIN {field_data_field_landmark_latitude} ctllat ON n.nid = ctllat.entity_id JOIN {field_data_field_landmark_longitude} ctllng ON n.nid = ctllng.entity_id WHERE n.type = 'landmarks' AND n.status = 1 ORDER BY n.title ASC");
   $x = 0;
   while ($row = $query->fetchObject()) {
     $landmarks[$x][nid] = $row->nid;

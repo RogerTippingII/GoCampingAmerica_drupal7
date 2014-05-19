@@ -70,7 +70,18 @@ if (isset($_REQUEST['fap'])) {
         // If search was run for a specific location (not a park name or standalone state)...
     ?>
     //alert("Search is location based.");
-    var urlStringMap = "/scripts/search_results.php?<?php echo $olCode; ?>=\"<?php echo $location; ?>\"&r=<?php echo $radius; ?>&smap=1";
+				<?php
+				if (isset($_GET['geocode_lat']) && isset($_GET['geocode_lng'])) {
+					?>
+			  	var geocodeaddition = "&geocode_lat=<?php print $_GET['geocode_lat'] ?>&geocode_lng=<?php print $_GET['geocode_lng'] ?>";
+					<?php
+				} else {
+					?>
+					var geocodeaddition = "";
+					<?php	
+				}
+				?>
+    var urlStringMap = "/scripts/search_results.php?<?php echo $olCode; ?>=\"<?php echo $location; ?>\"&r=<?php echo $radius; ?>&smap=1" + geocodeaddition;
     <?php
       } else {
 
@@ -227,6 +238,7 @@ if (isset($_REQUEST['fap'])) {
         location = $gca('#search-location').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+");
         var radius = $gca('#search-distance').val();
         var olCode = "l"; // set flag for location-based search
+        getCoordinates(location);
       } else if ($gca('#search-location-mini').val()) {
         var stateSearch = "<?php echo $_REQUEST['id'] ?>";
         var optin = "yes";
@@ -234,6 +246,7 @@ if (isset($_REQUEST['fap'])) {
         location = location + "+" + stateSearch;
         var radius = $gca('#search-distance-mini').val();
         var olCode = "l";
+        getCoordinates(location);
       } else {
         location = $gca('#gca-landmark').html();
         var radius = $gca('#search-landmark-distance').val();
@@ -253,13 +266,19 @@ if (isset($_REQUEST['fap'])) {
       }
       var radius = 3000;
       var olCode = "l";
+      getCoordinates(location);
     }
 
+	  var geocodeaddition = "";
+	  if (coordinates_lat != null && coordinates_lng != null) {
+	  	geocodeaddition = "&geocode_lat=" + coordinates_lat + "&geocode_lng=" + coordinates_lng;
+	  }
+
     // Define URL that will be used to load the results from the "search results query" page
-    var urlString = "/scripts/search_results.php?t=\"" + $gca('#gca-search-terms').html() + "\"&" + olCode + "=\"" + location + "\"&r=" + radius + "&optin=" + optin + "&state=" + stateSearch + "&type=" + searchType;
+    var urlString = "/scripts/search_results.php?t=\"" + $gca('#gca-search-terms').html() + "\"&" + olCode + "=\"" + location + "\"&r=" + radius + "&optin=" + optin + "&state=" + stateSearch + "&type=" + searchType + geocodeaddition;
     console.log("urlString: " + urlString);
     // Define URL that will be used to load the maps
-    var urlStringSmallMap = "/scripts/search_results.php?t=\"" + $gca('#gca-search-terms').html() + "\"&" + olCode + "=\"" + location + "\"&r=" + radius + "&optin=" + optin + "&state=" + stateSearch + "&type=" + searchType + "&smap=1";
+    var urlStringSmallMap = "/scripts/search_results.php?t=\"" + $gca('#gca-search-terms').html() + "\"&" + olCode + "=\"" + location + "\"&r=" + radius + "&optin=" + optin + "&state=" + stateSearch + "&type=" + searchType + "&smap=1" + geocodeaddition;
 
     // Load textual search results (non-map results)
     $gca('#gca-search-results').load(urlString + " #search-results", function() {

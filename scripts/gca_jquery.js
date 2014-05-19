@@ -34,14 +34,14 @@ $gca(document).ready(function () {
         $gca('.asw-center-tab').removeClass("active");
         $gca(this).addClass("active");
         $gca('.filter-wrapper').hide();
-        $gca($(this).attr("rel")).show();
+        $gca($gca(this).attr("rel")).show();
     });
 
     $gca('#mini-advanced-search-widget .asw-center-tab').live("click", function () {
         $gca('#mini-advanced-search-widget .asw-center-tab').removeClass("active");
         $gca(this).addClass("active");
         $gca('#mini-advanced-search-widget .filter-wrapper').hide();
-        $gca($(this).attr("rel")).show();
+        $gca($gca(this).attr("rel")).show();
     });
 
     // Video Contest Submission playlist page
@@ -57,12 +57,12 @@ $gca(document).ready(function () {
 
     $gca('.search-tab').click(function () {
         $gca('.filter-div').addClass('hide');
-        $gca($(this).attr("rel")).removeClass('hide');
+        $gca($gca(this).attr("rel")).removeClass('hide');
         $gca('.search-li').removeClass('tabs-active');
         $gca('.search-li').addClass('tabs-default');
-        $gca($(this).parent()).removeClass('tabs-default');
-        $gca($(this).parent()).addClass('tabs-active');
-        $gca($(this).attr("rel")).scrollbar();
+        $gca($gca(this).parent()).removeClass('tabs-default');
+        $gca($gca(this).parent()).addClass('tabs-active');
+        $gca($gca(this).attr("rel")).scrollbar();
     });
 
     $gca('#gca-search-header-tabs a').click(function () {
@@ -292,7 +292,7 @@ $gca(document).ready(function () {
             var urlString = "/park-search?p=" + park + " #search-results";
             $gca("#state-start, #state-start-intro").hide();
             _gaq.push(['_trackEvent', 'Buttons', 'Clicked', 'Search by Park Name', , false]);
-            window.history.pushState("", "", urlString);
+            //window.history.pushState("", "", urlString);
             $gca('#gca-search-results').load(urlString,function () {
                 $gca("#gca-search-throbber").hide();
                 $gca("#loading").hide();
@@ -569,7 +569,9 @@ $gca(document).ready(function () {
 			  }
         var urlString = "/findpark?fap=1&l=" + $gca('#search-location').val() + "&r=" + $gca('#search-distance').val() + "&t="+ $gca('#gca-search-terms').html() +"&o=l" + geocodeaddition + "#search-area";
         window.history.pushState({}, "", urlString);
-        $(window).trigger('GCASearch.searchInitiated', {
+
+        $gca(window).trigger('GCASearchInitiated', {
+            terms: $gca("#gca-search-terms").html(),
             location: $gca('#search-location').val(),
             radius: $gca('#search-distance').val(),
             searchType: searchType
