@@ -243,19 +243,22 @@ function showNodeCount()
 {
   $query = db_query("SELECT nid FROM {node} WHERE type = 'camp'");
   $x = 0;
-  while ($row = db_fetch_object($query)) {
+  //while ($row = db_fetch_object($query)) {
+  foreach($query as $row) {
     $x++;
   }
   echo "Camp count: " . $x . "<br />";
   $query = db_query("SELECT n.nid FROM {node} n, {content_type_camp} c WHERE n.nid = c.nid AND n.type = 'camp' AND c.field_camp_status_value = 'Active'");
   $x = 0;
-  while ($row = db_fetch_object($query)) {
+  //while ($row = db_fetch_object($query)) {
+  foreach($query as $row) {
     $x++;
   }
   echo "Active camp count: " . $x . "<br />";
   $query = db_query("SELECT n.nid FROM {node} n, {content_type_camp} c WHERE n.nid = c.nid AND n.type = 'camp' AND c.field_camp_status_value = 'Inactive'");
   $x = 0;
-  while ($row = db_fetch_object($query)) {
+  //while ($row = db_fetch_object($query)) {
+  foreach($query as $row) {
     $x++;
   }
   echo "Inactive camp count: " . $x . "<br />";
@@ -264,7 +267,8 @@ function showNodeCount()
 function getTermName($tid)
 {
   $query = db_query("SELECT name FROM {term_data} WHERE tid = :tid", array(':tid' => $tid));
-  while ($row = db_fetch_object($query)) {
+  //while ($row = db_fetch_object($query)) {
+  foreach($query as $row) {
     return $row->name;
   }
 }
@@ -272,7 +276,6 @@ function getTermName($tid)
 function getResults($terms, $loc, $radius, $testing, $offset, $originalTerms, $originalLocation, $optin, $olCode, $zoom, $stateNids, $stateFlag, $smallMap)
 {
   if (isset($loc) && isset($radius)) {
-
     // A latitude, longitude and radius have been specified, so get an array of matching parks
     $fullResult = getParksGeo($loc, $radius, $optin, $testing);
     jsLog("fullResult: " . count($fullResult));
@@ -332,16 +335,13 @@ function getParksGeo($loc, $radius, $optin, $testing)
   $result = array();
   $result[nidlist] = array();
   $x = 0;
-
   while($row = $query->fetchObject()){
     $camp_nids[] = $row->nid;
     $result[$row->nid]["distance"] = $row->distance;
   }
-
   $result["nidlist"] = $camp_nids;
 
   $camps = entity_load('node', $camp_nids);
-
   foreach ($camps as $nid => $entity) {
     if (($entity->title != " ")) {
 
@@ -381,8 +381,9 @@ function getParksGeo($loc, $radius, $optin, $testing)
 function getPromoText($nid, $vid)
 {
   $query = db_query("SELECT field_camp_promo_text_value FROM {content_type_camp} WHERE nid = :nid AND vid = :vid LIMIT 1", array(':nid' => $nid, ':vid' => $vid));
-  while ($row = db_fetch_array($query)) {
-    $result = $row["field_camp_promo_text_value"];
+  //while ($row = db_fetch_array($query)) {
+  foreach($query as $row) {
+    $result = $row->field_camp_promo_text_value;
   }
   if ($result) {
     return $result;
@@ -402,7 +403,8 @@ function checkExtendedStay($nid)
 function getOptin($nid)
 {
   $query = db_query("SELECT field_park_official_optin_value FROM {content_type_camp} WHERE nid = :nid", array(':nid' => $nid));
-  while ($row = db_fetch_object($query)) {
+  //while ($row = db_fetch_object($query)) {
+  foreach($query as $row) {
     if ($row->field_park_official_optin_value == "yes") {
       return "yes";
     }
@@ -413,7 +415,8 @@ function getOptin($nid)
 function getTermVid($tid)
 {
   $query = db_query("SELECT vid FROM {term_data} WHERE tid = :tid", array(':tid' => $tid));
-  while ($row = db_fetch_object($query)) {
+  //while ($row = db_fetch_object($query)) {
+  foreach($query as $row) {
     $vid = $row->vid;
   }
   return $vid;
@@ -434,7 +437,8 @@ function getParksTerms($terms, $testing)
     $query = db_query("SELECT nid FROM {term_node} WHERE tid = :tid", array(':tid' => $term));
     $result[$term] = array();
     $tempResult[$term] = array();
-    while ($row = db_fetch_object($query)) {
+    //while ($row = db_fetch_object($query)) {
+    foreach($query as $row) {
       if ($vid == 1) { // 1 = affiliate term
         $resultsAffiliate[] = $row->nid;
       } else {
@@ -445,8 +449,9 @@ function getParksTerms($terms, $testing)
     foreach ($tempResult[$term] as $tempNid) {
       $newestVid = getNewestVid($tempNid);
       $query = db_query("SELECT nid FROM {term_node} WHERE nid = :nid AND vid = :vid AND tid = :tid", array(':nid' => $tempNid, ':vid' => $newestVid, ':tid' => $term));
-      while ($row = db_fetch_array($query)) {
-        $result[$term][] = $row["nid"];
+      //while ($row = db_fetch_array($query)) {
+      foreach($query as $row) {
+        $result[$term][] = $row->nid;
       }
     }
   }
@@ -499,6 +504,10 @@ function getParksTerms($terms, $testing)
 
 function displayParks($geo, $termsResult, $distance, $offset, $originalTerms, $originalLocation, $olCode, $radius, $testing, $loc, $zoom, $stateNids, $stateFlag, $smallMap)
 {
+		$geoloc_params = "";
+		if(isset($loc[0]) && isset($loc[1])) {
+			$geoloc_params = "&geocode_lng=" . $loc[0] . "&geocode_lat=" . $loc[1];
+		}
 
   if ($testing == 2) {
     echo "displayParks triggered<br />";
@@ -582,15 +591,15 @@ function displayParks($geo, $termsResult, $distance, $offset, $originalTerms, $o
           $newOffset = ($i - 1) * 15;
         }
         if ($newOffset != $offset) {
-          $output .= "<a class='pagination-link' rel='?t=" . urlencode($originalTerms) . "&" . $olCode . "=" . urlencode($originalLocation) . "&r=" . $radius . "&o=" . $newOffset . "'>" . $i . "</a> ";
+          $output .= "<a class='pagination-link' rel='?t=" . urlencode($originalTerms) . "&" . $olCode . "=" . urlencode($originalLocation) . "&r=" . $radius . "&o=" . $newOffset . $geoloc_params . "'>" . $i . "</a> ";
         } else {
           $output .= "<span class='current-page'>" . $i . "</span> ";
           $currentPage = $i;
           if ($currentPage > 1) {
-            $previousPage = "<a class='pagination-link' rel='?t=" . urlencode($originalTerms) . "&" . $olCode . "=" . urlencode($originalLocation) . "&r=" . $radius . "&o=" . ($newOffset - 15) . "'>previous</a>&nbsp;&nbsp;&nbsp;";
+            $previousPage = "<a class='pagination-link' rel='?t=" . urlencode($originalTerms) . "&" . $olCode . "=" . urlencode($originalLocation) . "&r=" . $radius . "&o=" . ($newOffset - 15) . $geoloc_params . "'>previous</a>&nbsp;&nbsp;&nbsp;";
           }
           if ($currentPage != $pages) {
-            $nextPage = "&nbsp;&nbsp;&nbsp;<a class='pagination-link' rel='?t=" . urlencode($originalTerms) . "&" . $olCode . "=" . urlencode($originalLocation) . "&r=" . $radius . "&o=" . ($newOffset + 15) . "'>next</a>";
+            $nextPage = "&nbsp;&nbsp;&nbsp;<a class='pagination-link' rel='?t=" . urlencode($originalTerms) . "&" . $olCode . "=" . urlencode($originalLocation) . "&r=" . $radius . "&o=" . ($newOffset + 15) . $geoloc_params . "'>next</a>";
           }
         }
       }
@@ -632,7 +641,6 @@ function displayParks($geo, $termsResult, $distance, $offset, $originalTerms, $o
 
   unset($mapResult);
   $mapResults = array();
-
   for ($p = $offset; $p < ($offset + 15); $p++) {
     if ($smallMap == 0) {
       if ($p < $numberFeatured) {
@@ -683,7 +691,7 @@ function displayParks($geo, $termsResult, $distance, $offset, $originalTerms, $o
           $newOffset = ($i - 1) * 15;
         }
         if ($newOffset != $offset) {
-          echo "<a class='pagination-link' rel='?t=" . urlencode($originalTerms) . "&" . $olCode . "=" . urlencode($originalLocation) . "&r=" . $radius . "&o=" . $newOffset . "'>";
+          echo "<a class='pagination-link' rel='?t=" . urlencode($originalTerms) . "&" . $olCode . "=" . urlencode($originalLocation) . "&r=" . $radius . "&o=" . $newOffset . $geoloc_params . "'>";
         } else {
           echo "<span class='current-page'>";
         }
@@ -727,7 +735,6 @@ function displayInfo($nid, $distance, $radius, $stateFlag, $featuredFlag)
       echo " <span class='featured-title'>SPECIAL DEAL</span>";
     }
     echo "</h3>\n";
-
     if ($distance[$nid][city]) {
       //$latestInfo = getLatestInfo($nid, $distance[$nid]["vid"]);
       $latestInfo = $nodeInfo->field_location;
@@ -842,8 +849,8 @@ function displayMap($results, $loc, $zoom, $smallMap)
         <!--      $gca(".admin-menu").removeClass("admin-menu");-->
 
         $gca("#search-map-small").gmap().bind('init', function (ev, map) {
-          $('#map_canvas').gmap('addMarker', {'position': '57.7973333,12.0502107', 'bounds': true}).click(function () {
-            $('#map_canvas').gmap('openInfoWindow', {'content': 'Hello World!'}, this);
+          jQuery('#map_canvas').gmap('addMarker', {'position': '57.7973333,12.0502107', 'bounds': true}).click(function () {
+            jQuery('#map_canvas').gmap('openInfoWindow', {'content': 'Hello World!'}, this);
           });
         });
       });
@@ -1074,9 +1081,10 @@ function checkAssnDeal($assnID)
   $userID = getUserID($assnID);
   $query = db_query("SELECT nid FROM {node} WHERE type = 'deal' AND uid = :uid", array(':uid' => $userID));
   $result = 0;
-  while ($row = db_fetch_array($query)) {
+  //while ($row = db_fetch_array($query)) {
+  foreach($query as $row) {
     //echo "<span style='color:#ccc;font-size:0.7em;'> dl</span>";
-    $times = getTimes($row["nid"]);
+    $times = getTimes($row->nid);
     //echo "<span style='color:#ccc;font-size:0.7em;'> " . $row['nid'] . " </span>";
     $startTime = strtotime(str_replace("T", " ", $times["start"]));
     $endTime = strtotime(str_replace("T", " ", $times["end"]));
@@ -1094,9 +1102,10 @@ function checkAssnDeal($assnID)
 function getTimes($nid)
 {
   $query = db_query("SELECT field_deal_start_value, field_deal_end_value FROM {content_type_deal} WHERE nid = :nid ORDER BY vid DESC LIMIT 1", array(':nid' => $nid));
-  while ($row = db_fetch_array($query)) {
-    $result["start"] = $row["field_deal_start_value"];
-    $result["end"] = $row["field_deal_end_value"];
+  //while ($row = db_fetch_array($query)) {
+  foreach($query as $row) {
+    $result["start"] = $row->field_deal_start_value;
+    $result["end"] = $row->field_deal_end_value;
   }
   return $result;
 }
@@ -1104,8 +1113,9 @@ function getTimes($nid)
 function getUserID($name)
 {
   $query = db_query("SELECT uid FROM {users} WHERE name = :name LIMIT 1", array(':name' => $name));
-  while ($row = db_fetch_array($query)) {
-    $result = $row["uid"];
+  //while ($row = db_fetch_array($query)) {
+  foreach($query as $row) {
+    $result = $row->uid;
   }
   return $result;
 }

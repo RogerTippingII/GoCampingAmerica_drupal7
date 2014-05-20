@@ -553,21 +553,23 @@ $gca(document).ready(function () {
 
     function initiateSearch(searchType) {
         if (searchType == 1) {
+            var tlocation = $gca('#search-location-mini').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+") + ", " + $gca("#state-id").html();
             $gca("#mini-advanced-search-widget #gca-search-throbber").show();
         } else {
+        		var tlocation = $gca('#search-location').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+");
             $gca("#advanced-search-widget #gca-search-throbber").show();
             $gca("#loading").show();
         }
         // var locvalue = $gca('#search-location').attr("value");
 
-	      var tlocation = $gca('#search-location').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+");
+	      
 				getCoordinates(tlocation);
 
 			  var geocodeaddition = "";
 			  if (coordinates_lat != null && coordinates_lng != null) {
 			  	geocodeaddition = "&geocode_lat=" + coordinates_lat + "&geocode_lng=" + coordinates_lng;
 			  }
-        var urlString = "/findpark?fap=1&l=" + $gca('#search-location').val() + "&r=" + $gca('#search-distance').val() + "&t="+ $gca('#gca-search-terms').html() +"&o=l" + geocodeaddition + "#search-area";
+        var urlString = "/findpark?fap=1&l=" + tlocation + "&r=" + $gca('#search-distance').val() + "&t="+ $gca('#gca-search-terms').html() +"&o=l" + geocodeaddition + "#search-area";
         window.history.pushState({}, "", urlString);
 
         $gca(window).trigger('GCASearchInitiated', {
