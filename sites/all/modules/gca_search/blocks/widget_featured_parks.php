@@ -8,11 +8,11 @@ if ($parks) {
   for ($i = 0; $i < 5; $i++) {
     if ($parks[$i]) {
       $nodeInfo = node_load($parks[$i]);
-      $imageSize = getimagesize("http://www.gocampingamerica.com/sites/default/files/imagecache/sidebar_ad_180/sites/default/files/" . urlencode($nodeInfo->field_camp_slideshow[LANGUAGE_NONE][0]["filename"]));
+      $imageSize = getimagesize("http://www.gocampingamerica.com/sites/default/files/" . rawurlencode($nodeInfo->field_camp_slideshow[LANGUAGE_NONE][0]["filename"]));
       $width = 100;
       $height = round(($width * $imageSize[1]) / $imageSize[0]);
       echo "<table><tr>";
-      echo "<td valign='top' style='width:110px;'><img src='/sites/default/files/imagecache/sidebar_ad_180/sites/default/files/" . urlencode($nodeInfo->field_camp_slideshow[LANGUAGE_NONE][0]["filename"]) . "' width='" . $width . "' height='". $height . "' style='margin-right:10px;' /></td>";
+      echo "<td valign='top' style='width:110px;'><img src='/sites/default/files/" . rawurlencode($nodeInfo->field_camp_slideshow[LANGUAGE_NONE][0]["filename"]) . "' width='" . $width . "' height='". $height . "' style='margin-right:10px;' /></td>";
       echo "<td valign='top'><div style='line-height:1.3em;'><b><a href='/" . drupal_get_path_alias("node/" . $nodeInfo->nid) . "'>" . $nodeInfo->title . "</a></b></div>";
       echo "<div style='margin-top:7px;font-size:0.8em;'>" . $nodeInfo->field_location[LANGUAGE_NONE][0]["city"] . ", " . $nodeInfo->field_location[LANGUAGE_NONE][0]["province"] . "</div>";
       echo "</td></tr></table>";

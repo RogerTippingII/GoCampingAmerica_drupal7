@@ -29,8 +29,8 @@
   <script src="/scripts/jquery-1.6.2.js" type="text/javascript"></script>
 
   <?php $random = rand(0,10000000); ?>
-<!--  <script type="text/javascript" src="/scripts/gca_jquery.js?r=--><?php //echo $random; ?><!--"></script>-->
-<!--  <script type="text/javascript" src="/scripts/gca_jquery_front.js"></script>-->
+  <script type="text/javascript" src="/scripts/gca_jquery_front.js"></script>
+  <script type="text/javascript" src="/scripts/gca_jquery.js?r=<?php echo $random; ?>"></script>
   <script type="text/javascript" src="/scripts/tablesorter/jquery.tablesorter.js"></script>
   <script type="text/javascript" "/scripts/jquery.gmap-1.1.0-min.js"></script>
   <script type="text/javascript" language="javascript" src="/scripts/datatable/media/js/jquery.dataTables.js"></script>

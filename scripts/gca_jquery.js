@@ -239,7 +239,7 @@ $gca(document).ready(function () {
                 $gca("#loading").show();
                 //var park = $gca('#search-park').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+");
                 var park = escape($gca('#search-park').val());
-                var urlString = "/park-search?p=" + park + " #search-results";
+                var urlString = "/scripts/search_park_name.php?p=" + park + " #search-results";
                 //alert(urlString);
                 $gca('#gca-search-results').load(urlString,function () {
                     $gca("#gca-search-throbber").hide();
@@ -289,7 +289,7 @@ $gca(document).ready(function () {
             $gca("#loading").show();
             //var park = $gca('#advanced-search-widget #search-park').val().replace(/[^\w\s]|_/g, "").replace(/\s+/g, "+");
             var park = escape($gca('#advanced-search-widget #search-park').val());
-            var urlString = "/park-search?p=" + park + " #search-results";
+            var urlString = "/scripts/search_park_name.php?p=" + park + " #search-results";
             $gca("#state-start, #state-start-intro").hide();
             _gaq.push(['_trackEvent', 'Buttons', 'Clicked', 'Search by Park Name', , false]);
             //window.history.pushState("", "", urlString);

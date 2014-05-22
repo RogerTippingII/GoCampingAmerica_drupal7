@@ -1,0 +1,143 @@
+diff a/scripts/search_results.php b/scripts/search_results.php	(rejected hunks)
+@@ -9,16 +9,13 @@
+ 
+ // Bootstrap
+ chdir($_SERVER['DOCUMENT_ROOT']);
+-define('DRUPAL_ROOT', getcwd());
+-
++define('DRUPAL_ROOT', __DIR__ . "/..");
+ global $base_url;
+-$base_url = 'http://'.$_SERVER['HTTP_HOST'];
++$base_url = 'http://' . $_SERVER['HTTP_HOST'];
+ require_once './includes/bootstrap.inc';
+ require_once './includes/common.inc';
+ require_once './includes/module.inc';
+ drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+-//drupal_bootstrap(DRUPAL_BOOTSTRAP_DATABASE);
+-//drupal_bootstrap(DRUPAL_BOOTSTRAP_SESSION);
+ drupal_load('module', 'node');
+ module_invoke('node', 'boot');
+ 
+@@ -415,9 +412,8 @@ function getOptin($nid)
+ 
+ function getTermVid($tid)
+ {
+-  $query = db_query("SELECT vid FROM {term_data} WHERE tid = :tid", array(':tid' => $tid));
+-  //while ($row = db_fetch_object($query)) {
+-  foreach($query as $row) {
++  $query = db_query("SELECT vid FROM {term_data} WHERE tid = %d", $tid);
++  while ($row = db_fetch_object($query)) {
+     $vid = $row->vid;
+   }
+   return $vid;
+@@ -435,11 +431,10 @@ function getParksTerms($terms, $testing)
+   $x = 0;
+   foreach ($terms as $term) {
+     $vid = getTermVid($term);
+-    $query = db_query("SELECT nid FROM {term_node} WHERE tid = :tid", array(':tid' => $term));
++    $query = db_query("SELECT nid FROM {term_node} WHERE tid = %d", $term);
+     $result[$term] = array();
+     $tempResult[$term] = array();
+-    //while ($row = db_fetch_object($query)) {
+-    foreach($query as $row) {
++    while ($row = db_fetch_object($query)) {
+       if ($vid == 1) { // 1 = affiliate term
+         $resultsAffiliate[] = $row->nid;
+       } else {
+@@ -449,16 +444,15 @@ function getParksTerms($terms, $testing)
+     // If tags are found for a term, make sure the term is associated with the most recent version of the node. Otherwise, terms that have been removed from a node will still show up.
+     foreach ($tempResult[$term] as $tempNid) {
+       $newestVid = getNewestVid($tempNid);
+-      $query = db_query("SELECT nid FROM {term_node} WHERE nid = :nid AND vid = :vid AND tid = :tid", array(':nid' => $tempNid, ':vid' => $newestVid, ':tid' => $term));
+-      //while ($row = db_fetch_array($query)) {
+-      foreach($query as $row) {
+-        $result[$term][] = $row->nid;
++      $query = db_query("SELECT nid FROM {term_node} WHERE nid = %d AND vid = %d AND tid = %d", $tempNid, $newestVid, $term);
++      while ($row = db_fetch_array($query)) {
++        $result[$term][] = $row["nid"];
+       }
+     }
+   }
+ 
+   if ($testing == 2) {
+-    foreach ($result as $key=>$value) {
++    foreach ($result as $key => $value) {
+       echo "Term " . $key . " results: " . count($value) . "<br />";
+     }
+   }
+@@ -865,7 +859,6 @@ function displayMap($results, $loc, $zoom, $smallMap)
+   }
+ }
+ 
+-/*
+ function lookup($string)
+ {
+   $toReplace = array('"', "'");
+@@ -921,7 +914,6 @@ function lookup_msdn($string)
+   //jslog($result[0] . " | " . $result[1]);
+   return $result;
+ }
+-*/
+ 
+ function jsLog($message)
+ {
+@@ -934,13 +926,54 @@ function jsLog($message)
+ 
+ function getGeocodes($address)
+ {
+-  if(isset($_GET['geocode_lat']) && isset($_GET['geocode_lng'])) {
+-    return array(
+-      0 => $_GET['geocode_lng'],
+-      1 => $_GET['geocode_lat']);
++  //$google_maps_key='ABQIAAAAYUCEx550pPnhZbiXhQp6KRTuLIPQxQ_MO9mtUG5QXxVZmkO4NhTIpXTHTAqs_C0eelzsC0qm-615jA';
++  //$google_maps_key='AIzaSyDoFIdhWSMf90AsIjL82BIcCnL5nNSLdGE';
++  //$adr = urlencode($address);
++  //$url = "http://maps.google.com/maps/geo?q=".$adr."&output=xml&key=$google_maps_key";
++  //$url = "http://maps.googleapis.com/maps/api/geocode/json?address=" . $adr . "&sensor=false";
++  //$url = "http://maps.google.com/maps/geo?q= " . $adr . "&output=xml";
++  //$urlData = file_get_contents($url); 
++
++  //echo "<textarea>";
++  //echo $urlData;
++  //echo "</textarea>";
++
++  //$xml = simplexml_load_file($url);
++  //$jsonArray = json_decode($urlData);
++  //$resultsArray = $jsonArray->results;
++
++  //$loc[0] = $resultsArray[0]->geometry->location->lng;
++  //$loc[1] = $resultsArray[0]->geometry->location->lat;
++
++  $hour = date("G", mktime());
++  if ($hour < 13) {
++    $loc = lookup($address);
++    if (!$loc[0]) {
++      $loc = loopup_msdn($address);
++    }
+   } else {
+-    return null;
++    $loc = lookup_msdn($address);
++    if (!$loc[0]) {
++      $loc = lookup($address);
++    }
++  }
++
++
++  /*
++  $status = $xml->Response->Status->code;
++  if ($status='200') { 
++    foreach ($xml->Response->Placemark as $node) { 
++      $coordinates = $node->Point->coordinates;
++      $loc = explode(",", $coordinates);
++    }
++  } else { 
++    console.log("Geo look-up error.");
++    $loc[0] = 0;
++    $loc[1] = 0;
+   }
++  */
++
++  return $loc;
+ }
+ 
+ 

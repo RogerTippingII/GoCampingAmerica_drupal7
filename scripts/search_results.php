@@ -266,7 +266,7 @@ function showNodeCount()
 
 function getTermName($tid)
 {
-  $query = db_query("SELECT name FROM {term_data} WHERE tid = :tid", array(':tid' => $tid));
+  $query = db_query("SELECT name FROM {taxonomy_term_data} WHERE tid = :tid", array(':tid' => $tid));
   //while ($row = db_fetch_object($query)) {
   foreach($query as $row) {
     return $row->name;
@@ -414,7 +414,7 @@ function getOptin($nid)
 
 function getTermVid($tid)
 {
-  $query = db_query("SELECT vid FROM {term_data} WHERE tid = :tid", array(':tid' => $tid));
+  $query = db_query("SELECT vid FROM {taxonomy_term_data} WHERE tid = :tid", array(':tid' => $tid));
   //while ($row = db_fetch_object($query)) {
   foreach($query as $row) {
     $vid = $row->vid;
@@ -434,7 +434,7 @@ function getParksTerms($terms, $testing)
   $x = 0;
   foreach ($terms as $term) {
     $vid = getTermVid($term);
-    $query = db_query("SELECT nid FROM {term_node} WHERE tid = :tid", array(':tid' => $term));
+    $query = db_query("SELECT nid FROM {taxonomy_index} WHERE tid = :tid", array(':tid' => $term));
     $result[$term] = array();
     $tempResult[$term] = array();
     //while ($row = db_fetch_object($query)) {
@@ -446,15 +446,17 @@ function getParksTerms($terms, $testing)
       }
     }
     // If tags are found for a term, make sure the term is associated with the most recent version of the node. Otherwise, terms that have been removed from a node will still show up.
-    foreach ($tempResult[$term] as $tempNid) {
-      $newestVid = getNewestVid($tempNid);
-      $query = db_query("SELECT nid FROM {term_node} WHERE nid = :nid AND vid = :vid AND tid = :tid", array(':nid' => $tempNid, ':vid' => $newestVid, ':tid' => $term));
-      //while ($row = db_fetch_array($query)) {
-      foreach($query as $row) {
-        $result[$term][] = $row->nid;
-      }
-    }
+//    foreach ($tempResult[$term] as $tempNid) {
+//      $newestVid = getNewestVid($tempNid);
+//      $query = db_query("SELECT nid FROM {taxonomy_index} WHERE nid = :nid AND tid = :tid", array(':nid' => $tempNid, ':tid' => $term));
+//      //while ($row = db_fetch_array($query)) {
+//      foreach($query as $row) {
+//        $result[$term][] = $row->nid;
+//      }
+//    }
   }
+
+  $result = $tempResult;
 
   if ($testing == 2) {
     foreach ($result as $key => $value) {
@@ -795,9 +797,11 @@ function displayMap($results, $loc, $zoom, $smallMap)
     }
     $x = 0;
     foreach ($results as $nid) {
-      $query = db_query("SELECT l.latitude, l.longitude FROM {location} l, {location_instance} li, {node} n WHERE l.lid = li.lid AND li.nid = :nid AND li.nid = n.nid ORDER BY n.created DESC LIMIT 1", array(":nid" => $nid));
+      $query = db_query("SELECT n.title, al.alias, l.latitude, l.longitude FROM {location} l, {location_instance} li, {node} n, {url_alias} al WHERE l.lid = li.lid AND li.nid = :nid AND li.nid = n.nid AND al.source = :source ORDER BY n.created DESC LIMIT 1", array(":nid" => $nid, ":source" => "node/" . $nid));
       while ($row = $query->fetchObject()) {
         $coords[$x][nid] = $results[$x];
+        $coords[$x][title] = $row->title;
+        $coords[$x][alias] = $row->alias;
         $coords[$x][lat] = $row->latitude;
         $coords[$x][long] = $row->longitude;
       }
@@ -815,18 +819,19 @@ function displayMap($results, $loc, $zoom, $smallMap)
       echo "displayMap: post loc query: " . $x . "<br />";
     }
 
-    $markers = "markers: [";
-    foreach ($coords as $result) {
-      $markers .= '{ latitude: ' . $result[lat] . ', longitude: ' . $result[long] . ', html: "<b>' . getParkName($result[nid]) . '</b><br />Rates: ';
-      if ($result["rates"]) {
-        $markers .= $result["rates"];
-      } else {
-        $markers .= "Not Specified";
-      }
-      $markers .= '<br /><a href=\"/' . getResultAlias($result[nid]) . '\" target=\"_parent\">View &gt;&gt;</a>" }, ';
-    }
-    $markers = substr($markers, 0, (strlen($markers) - 2));
-    $markers = $markers . "]";
+    $coords_json = json_encode($coords);
+//    $markers = "markers: [";
+//    foreach ($coords as $result) {
+//      $markers .= '{ latitude: ' . $result[lat] . ', longitude: ' . $result[long] . ', html: "<b>' . getParkName($result[nid]) . '</b><br />Rates: ';
+//      if ($result["rates"]) {
+//        $markers .= $result["rates"];
+//      } else {
+//        $markers .= "Not Specified";
+//      }
+//      $markers .= '<br /><a href=\"/' . getResultAlias($result[nid]) . '\" target=\"_parent\">View &gt;&gt;</a>" }, ';
+//    }
+//    $markers = substr($markers, 0, (strlen($markers) - 2));
+//    $markers = $markers . "]";
     ?>
     <script type="text/javascript">
       $gca(function () {
@@ -848,10 +853,28 @@ function displayMap($results, $loc, $zoom, $smallMap)
         <?php //echo $zoom; ?><!-- });-->
         <!--      $gca(".admin-menu").removeClass("admin-menu");-->
 
-        $gca("#search-map-small").gmap().bind('init', function (ev, map) {
-          jQuery('#map_canvas').gmap('addMarker', {'position': '57.7973333,12.0502107', 'bounds': true}).click(function () {
-            jQuery('#map_canvas').gmap('openInfoWindow', {'content': 'Hello World!'}, this);
-          });
+        var coords = JSON.parse('<? echo addslashes($coords_json); ?>');
+
+        $gca("#search-map-small").gmap({
+          'center' : '<? echo $loc[1] . ',' . $loc[0]; ?>',
+          'callback': function(map){
+            var self = this;
+
+            coords.forEach(function(coord){
+              self.addMarker({'position': coord['lat'] + ',' + coord['long']})
+                .click(function(){
+                  var html = '<b>' + coord["title"] + '</b><br />Rates: ';
+                  if (coord["rates"]) {
+                    html += coord["rates"];
+                  } else {
+                    html += "Not Specified";
+                  }
+                  html += '<br /><a href=\"/' + coord["alias"] + '\" target=\"_parent\">View &gt;&gt;</a>';
+
+                  self.openInfoWindow({ 'content': html }, this);
+                });
+            });
+          }
         });
       });
     </script><?php

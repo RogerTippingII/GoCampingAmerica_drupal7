@@ -99,7 +99,13 @@ $gca(document).ready(function() {
          if(!$gca('#search-location').val()) {
            alert("Please enter a location.");
          } else {
-           var urlString = "/findpark?fap=1&l=" + $gca('#search-location').val() + "&r=" + $gca('#search-distance').val() + "&o=l#search-area";
+           getCoordinates($gca("#search-location").val());
+           var geocodeaddition = "";
+           if (coordinates_lat != null && coordinates_lng != null) {
+             geocodeaddition = "&geocode_lat=" + coordinates_lat + "&geocode_lng=" + coordinates_lng;
+           }
+
+           var urlString = "/findpark?fap=1&l=" + $gca('#search-location').val() + "&r=" + $gca('#search-distance').val() + "&o=l" + geocodeaddition + "#search-area";
 		   _gaq.push(['_trackEvent', 'Buttons', 'Clicked', 'Home Search Button',, false]);
            window.location = urlString;
 		   return false;

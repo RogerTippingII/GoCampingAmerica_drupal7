@@ -24,6 +24,7 @@ if (isset($_REQUEST['p'])) {
 //print_r($target);
 //echo "</pre>";
 
+$results = array();
 $x = 0;
 foreach($target as $keyword) {
   if(trim($keyword) != ''){
@@ -36,7 +37,7 @@ foreach($target as $keyword) {
     //echo "query: " . $queryString;
 
     $query = db_query($queryString, array("keyword" => '%%' . $keyword . '%%'));
-    $results = array();
+
     while ($row = $query->fetchObject()) {
       $results[$x][] = $row->nid;
     }
@@ -49,6 +50,7 @@ foreach($target as $keyword) {
   }
 }
 
+
 $intersected = $results[0];
 if ($targetCount > 1) {
   for ($i = 1; $i < $targetCount; $i++) {
@@ -58,7 +60,6 @@ if ($targetCount > 1) {
 //echo "Intersected: ";
 //print_r($intersected);
 //echo "<br />";
-
 
 $parks = getInfo($intersected);
 
