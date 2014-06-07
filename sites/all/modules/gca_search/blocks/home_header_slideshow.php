@@ -4,7 +4,8 @@ $slideData = getSlideData();
 
 $x = 0;
 foreach ($slideData as $slide) {
-  $slideInfo = node_load($slide);
+  $slideInfo = $slide;
+
   if ($slideInfo->field_slide_youtube[LANGUAGE_NONE][0][url]) {
     $youtube = str_replace("http://www.youtube.com/watch?v=", "", $slideInfo->field_slide_youtube[LANGUAGE_NONE][0][url]);
   }
@@ -57,13 +58,35 @@ foreach ($slideData as $slide) {
 
 <?php
 function getSlideData() {
-  for ($i = 0; $i < 4; $i++) {
+  $slides = array();
+//  for ($i = 0; $i < 4; $i++) {
     //$query = db_query("SELECT n.nid FROM {node} n, {content_type_slide} s WHERE n.nid = s.nid AND n.type = 'slide' AND n.status = 1 ORDER BY s.field_slide_order_value ASC, n.created DESC LIMIT 4");
-    $query = db_query("SELECT n.nid FROM {node} n, {content_type_slide} s WHERE n.nid = s.nid AND n.type = 'slide' AND n.status = 1 AND s.field_slide_order_value = :orderValue ORDER BY n.created DESC LIMIT 1", array("orderValue" => ($i + 1)));
-    while ($row = $query->fetchObject()) {
-      $slides[] = $row->nid;
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'slide')
+    ->propertyOrderBy('created', 'DESC')
+    ->fieldOrderBy('field_slide_order', 'value', 'ASC')
+    ->range(0,4);
+
+  $results = $query->execute();
+
+  if(isset($results['node'])){
+    $slide_nids = array_keys($results['node']);
+
+    foreach($slide_nids as $slide_nid){
+      $slide_obj = node_load($slide_nid);
+
+      $slides[] = $slide_obj;
     }
   }
+//
+//    $query = db_query("SELECT n.nid FROM {node} n, {content_type_slide} s WHERE n.nid = s.nid AND n.type = 'slide' AND n.status = 1 AND s.field_slide_order_value = :orderValue ORDER BY n.created DESC LIMIT 1", array("orderValue" => ($i + 1)));
+//    while ($row = $query->fetchObject()) {
+//      $slides[] = $row->nid;
+//    }
+//  }
+
   return $slides;
 }
 ?>
