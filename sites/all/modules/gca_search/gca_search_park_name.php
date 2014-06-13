@@ -12,53 +12,40 @@ if (isset($_REQUEST['p'])) {
 //print_r($target);
 //echo "</pre>";
 
-$x = 0;
-foreach($target as $keyword) {
-  if(trim($keyword) != ''){
-    if (isset($_REQUEST['sid'])) {
-      $queryString = 'SELECT distinct nr.nid FROM {node_revision} nr, {node} n, {location} l, {location_instance} li WHERE n.nid=nr.nid AND n.nid=li.nid AND l.lid=li.lid AND n.type="camp" AND li.genid LIKE "%%field_location%%" nr.title LIKE "%%%s%%" and l.province = "' . $_REQUEST['sid'] . '"';
-      //echo $queryString;
-    } else {
-      $queryString = "SELECT distinct nr.nid FROM {node_revision} nr, {node} n WHERE n.type='camp' AND nr.title LIKE :keyword";
-    }
-    //echo "query: " . $queryString;
+$parks = array();
+if(count(target) > 0){
+  if (isset($state_id)) {
+    $queryString = "SELECT distinct n.nid
+                        FROM {node} n
+                        JOIN {location_instance} li ON li.vid = n.vid
+                        JOIN {location} l ON l.lid = li.lid
+                        WHERE n.type = 'camp'
+                        AND l.province = '" . $state_id . "'";
+  } else {
+    $queryString = "SELECT distinct n.nid
+                        FROM {node} n
+                        WHERE n.type='camp'";
 
-    $query = db_query($queryString, array("keyword" => '%%' . $keyword . '%%'));
-    $results = array();
-    while ($row = $query->fetchObject()) {
-      $results[$x][] = $row->nid;
-    }
-//    echo "<pre>";
-//    echo "results: ";
-//    print_r($results);
-//    echo "</pre>";
-    $x++;
-    $targetCount++;
   }
-}
 
-$intersected = $results[0];
-if ($targetCount > 1) {
-  for ($i = 1; $i < $targetCount; $i++) {
-    $intersected = array_intersect($intersected, $results[$i]);
+  foreach($target as $keyword) {
+    $queryString .= " AND n.title LIKE '%%". $keyword ."%%'";
   }
+
+  $queryString .= " ORDER BY n.title";
+  $rs = db_query($queryString);
+
+  $query_results = $rs->fetchAllAssoc('nid');
+  $nids = array_keys($query_results);
+
+  $parks = node_load_multiple($nids);
 }
-//echo "Intersected: ";
-//print_r($intersected);
-//echo "<br />";
-
-
-$parks = getInfo($intersected);
-
-//echo "Parks: ";
-//print_r($parks);
-//echo "<br />";
 
 echo "<div id='search-results'>\n";
 
 if (count($parks)) {
   foreach ($parks as $park) {
-    if (checkActive($park->nid)) {
+    if ($park->field_camp_status[LANGUAGE_NONE][0]["value"] == 'active') {
       $oldParkURL = 'node/' . $park->nid;
       $newParkURL = getParkAlias($oldParkURL);
       echo "<div class='search-result-item'><h3><a href='/" . $newParkURL . "'>" . $park->title . "</a></h3>\n";
@@ -97,17 +84,4 @@ function getInfo($nids) {
   return $results;
 }
 
-function checkActive($nid) {
-  $result = 0;
-  $query = db_query("SELECT field_camp_status_value FROM {content_type_camp} where nid = :nid ORDER BY vid DESC LIMIT 1", array("nid" => $nid));
-  while ($row = $query->fetchAssoc()) {
-    //echo "checkActive row found.<br />";
-    //echo "checkActive status: " . $row["field_camp_status_value"] . "<br />";
-    if ($row["field_camp_status_value"] == "Active" || $row["field_camp_status_value"] == "active") {
-      $result = 1;
-    }
-  }
-  //echo "checkActive result: " . $result . "<br />";
-  return $result;
-}
 ?>
