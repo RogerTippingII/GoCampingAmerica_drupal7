@@ -809,17 +809,19 @@ function getHeaderImg($state) {
 
 function listStateParks($stateAbbrev) {
   $camps = array();
-
+  // this query has been fixed
   $query = db_query("
     SELECT node.nid
     FROM node
-    JOIN content_field_location cfl ON cfl.vid = node.vid
-    JOIN location l ON l.lid = cfl.field_location_lid
-    WHERE node.type = 'camp' AND l.province = :state",
+    LEFT JOIN field_data_field_location cfl ON cfl.revision_id = node.vid
+    LEFT JOIN location l ON l.lid = cfl.field_location_lid
+    JOIN field_data_field_camp_status cp ON cp.revision_id = node.vid
+    WHERE node.type = 'camp' AND l.province = :state AND cp.field_camp_status_value = 'active'",
     array(":state" => $stateAbbrev)
   );
 
-
+  
+  
   $nids = array();
   while($row = $query->fetchObject()){
     $nids[] = (int)$row->nid;
@@ -843,8 +845,8 @@ function listStateParks($stateAbbrev) {
 
 function isLatest($nid) {
   $result = 0;
-  $query = db_query("SELECT field_camp_status_value FROM {content_type_camp} WHERE nid = %d ORDER BY vid DESC LIMIT 1", $nid);
-  while ($row = db_fetch_array($query)) {
+  $query = db_query("SELECT field_camp_status_value FROM {field_data_field_camp_status} WHERE entity_id = :nid LIMIT 1", array(':nid' => $nid));
+  while ($row = $query->fetchAssoc()) {
     if ($row["field_camp_status_value"] == "Active" || $row["field_camp_status_value"] == "active") {
       $result = 1;
     }
@@ -853,8 +855,8 @@ function isLatest($nid) {
 }
 
 function getPromoText($nid, $vid) {
-  $query = db_query("SELECT field_camp_promo_text_value FROM {content_type_camp} WHERE nid = %d AND vid = %d LIMIT 1", $nid, $vid);
-  while ($row = db_fetch_array($query)) {
+  $query = db_query("SELECT field_camp_promo_text_value FROM {field_data_field_camp_promo_text} WHERE entity_id = :nid LIMIT 1", array(':nid' => $nid));
+  while ($row = $query->fetchAssoc()) {
     $result = $row["field_camp_promo_text_value"];
   }
   if ($result) {
@@ -885,9 +887,9 @@ function getStateFeatured($parks) {
 }
 
 function getFeaturedParks($stateAbbrev) {
-  $query = db_query("SELECT DISTINCT n.nid, n.title, l.city, l.province FROM {node} n, {location} l, {location_instance} li, {content_type_camp} c WHERE n.nid = li.nid AND n.nid = c.nid AND li.lid = l.lid AND n.type = 'camp' AND l.province = '%s' AND c.field_camp_status_value = 'Active' ORDER BY n.title ASC", $stateAbbrev);
+  $query = db_query("SELECT DISTINCT n.nid, n.title, l.city, l.province FROM {node} n, {location} l, {location_instance} li, {field_data_field_camp_status} c WHERE n.nid = li.nid AND n.nid = c.entity_id AND li.lid = l.lid AND n.type = 'camp' AND l.province = :state AND c.field_camp_status_value = 'active' ORDER BY n.title ASC", array(':state' => $stateAbbrev));
   $x = 0;
-  while ($row = db_fetch_object($query)) {
+  while ($row = $query->fetchObject()) {
 
     // Make sure the data is from the latest vid
 
@@ -903,9 +905,9 @@ function getFeaturedParks($stateAbbrev) {
 }
 
 function checkVid($nid) {
-  $query = db_query("SELECT field_park_tier_value FROM {content_type_camp} WHERE nid = %d ORDER BY vid DESC LIMIT 1", $nid);
+  $query = db_query("SELECT field_park_tier_value FROM {field_data_field_park_tier} WHERE nid = :nid LIMIT 1", array(':nid' => $nid));
   $result = 0;
-  while ($row = db_fetch_array($query)) {
+  while ($row = $query->fetchAssoc()) {
     if ($row["field_park_tier_value"] == 4) {
       $result = 1;
     }
