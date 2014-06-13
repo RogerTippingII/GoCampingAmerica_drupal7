@@ -117,7 +117,7 @@ function exportSpreadsheet($info, $begin, $end) {
 
 function getChangedBy($user) {
   $query = db_query("SELECT name FROM {users} WHERE uid = %d LIMIT 1", $user);
-  while ($row = db_fetch_array($query)) {
+  while ($row = $query->fetchAssoc()) {
     $result = $row["name"];
   }
   if ($result) {
@@ -182,7 +182,7 @@ function extractFields($info) {
 
 function getParkInfo($cid) {
   $query = db_query("SELECT nid, username, park_name, modified, data, user FROM {park_changes} WHERE cid = %s LIMIT 1", $cid);
-  while ($row = db_fetch_array($query)) {
+  while ($row = $query->fetchAssoc()) {
     $result["cid"] = $cid;
 	$result["nid"] = $row["nid"];
 	$result["username"] = $row["username"];
@@ -199,7 +199,7 @@ function getParkInfo($cid) {
 
 function checkGCARole($user) {
   $query = db_query("SELECT rid FROM {users_roles} WHERE uid = %d AND (rid = 6 || rid = 4)", $user);
-  while ($row = db_fetch_array($query)) {
+  while ($row = $query->fetchAssoc()) {
     return 1;
   }
   return 0;
@@ -207,7 +207,7 @@ function checkGCARole($user) {
 
 function getParks($begin, $end) {
   $query = db_query("SELECT cid, user FROM {park_changes} WHERE modified > %s AND modified < %s ORDER BY modified DESC", $begin, $end);
-  while ($row = db_fetch_array($query)) {
+  while ($row = $query->fetchAssoc()) {
     if (checkGCARole($row["user"]) != 1) {
 	  $result[] = $row["cid"];
     }

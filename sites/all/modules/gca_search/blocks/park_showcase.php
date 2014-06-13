@@ -14,11 +14,11 @@ $park = node_load($parks[$rand]);
 echo "<div class='showcase'>";
 if ($park->field_camp_slideshow[LANGUAGE_NONE][0]["uri"]) {
   echo "<div class='photo'>";
-  echo "<a href='/" . $park->path . "' onClick=\"_gaq.push(['_trackEvent', 'Widgets', 'Homepage Featured Park Widget', 'Clicked',, false]);\"><img width='180' height='120' src='". file_create_url($park->field_camp_slideshow[LANGUAGE_NONE][0]["uri"]) . "' /></a>";
+  echo "<a href='" . drupal_get_path_alias('node/'.$park->nid) . "' onClick=\"_gaq.push(['_trackEvent', 'Widgets', 'Homepage Featured Park Widget', 'Clicked',, false]);\"><img width='180' height='120' src='". file_create_url($park->field_camp_slideshow[LANGUAGE_NONE][0]["uri"]) . "' /></a>";
   echo "</div>";
 }
 echo "<h3 class='title'>";
-echo "<a href='/" . $park->path . "' onClick=\"_gaq.push(['_trackEvent', 'Widgets', 'Homepage Featured Park Widget', 'Clicked',, false]);\">" . $park->title . "</a>";
+echo "<a href='" . drupal_get_path_alias('node/'.$park->nid) . "' onClick=\"_gaq.push(['_trackEvent', 'Widgets', 'Homepage Featured Park Widget', 'Clicked',, false]);\">" . $park->title . "</a>";
 echo "</h3>";
 echo $park->field_location[LANGUAGE_NONE][0]["street"] . "<br />";
 if ($park->field_location[LANGUAGE_NONE][0]["additional"]) {
@@ -31,7 +31,7 @@ if ($park->field_camp_phone[LANGUAGE_NONE][0]["number"]) {
 }
 echo "</div>";
 echo "<div class='view-link'>";
-echo "<a href='" . $park->path . "' onClick=\"_gaq.push(['_trackEvent', 'Widgets', 'Homepage Featured Park Widget', 'Clicked',, false]);\">View »</a>";
+echo "<a href='" . drupal_get_path_alias('node/'.$park->nid) . "' onClick=\"_gaq.push(['_trackEvent', 'Widgets', 'Homepage Featured Park Widget', 'Clicked',, false]);\">View »</a>";
 echo "</div>";
 echo "</div> <!-- /showcase -->";
 

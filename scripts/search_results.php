@@ -63,7 +63,7 @@ $smallMap = $_REQUEST["smap"]; // 0 = display results; 1 = display maps
 /* **************************************** */
 
 if (isset($_REQUEST['t'])) {
-  // Variable "t" in the URL string contains all of the taxonomies selected via the search filters
+  // Variable "t" in the URL string contains all of the taxonomies selected via th0e search filters
   $originalTerms = str_replace('"', '', $_REQUEST['t']);
   $terms = array_filter(explode("|", $originalTerms));
 }
@@ -855,7 +855,7 @@ function displayMap($results, $loc, $zoom, $smallMap)
 
         var coords = JSON.parse('<? echo addslashes($coords_json); ?>');
 
-        $gca("#search-map-small").gmap({
+        $gca("#search-map-small, #search-map").gmap({
           'center' : '<? echo $loc[1] . ',' . $loc[0]; ?>',
           'callback': function(map){
             var self = this;
@@ -1048,7 +1048,7 @@ function getFeaturedParks($list)
   $result = array();
 
   foreach ($list as $park) {
-    $query = db_query("SELECT field_park_tier_value FROM {content_type_camp} WHERE nid = :nid ORDER BY vid DESC LIMIT 1", array(":nid" => $park));
+    $query = db_query("SELECT field_park_tier_value FROM {field_data_field_park_tier} WHERE nid = :nid ORDER BY vid DESC LIMIT 1", array(":nid" => $park));
     while ($row = $query->fetchAssoc()) {
       if ($row["field_park_tier_value"] > 3) {
         $result[] = $park;

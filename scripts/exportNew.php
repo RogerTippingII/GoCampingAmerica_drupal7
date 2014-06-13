@@ -75,7 +75,7 @@ function getParks($off) {
     $offset = 0;
   }
   $query = db_query("SELECT n.nid FROM {node} n WHERE n.type = 'camp' AND n.status = 1 LIMIT %d, %d", $offset, $limit);
-  while ($row = db_fetch_array($query)) {
+  while ($row = $query->fetchAssoc()) {
     $result[] = $row["nid"];
   }
   if (isset($result)) {

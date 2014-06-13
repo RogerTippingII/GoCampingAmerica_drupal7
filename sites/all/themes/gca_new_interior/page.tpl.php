@@ -51,7 +51,7 @@
       <?php endif; ?>
       <div id="body-center">
         <?php print $messages; ?>
-<!--        --><?php //if ($tabs): ?><!--<div class="tabs-wrapper clearfix">--><?php //print render($tabs);?><!--</div>--><?php //endif; ?>
+        <?php if ($tabs): ?><div class="tabs-wrapper clearfix"><?php print render($tabs);?></div><?php endif; ?>
         <?php print render($page["help"]); ?>
         <?php print render($page["contentTop"]); ?>
         <?php print render($page["content"]); ?>

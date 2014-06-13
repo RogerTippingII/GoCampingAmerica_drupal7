@@ -594,6 +594,7 @@ function getVariables() {
   if (isset($_REQUEST['state'])) {
     $variable[state] = preg_replace("/[^a-zA-Z\s]/", "", $_REQUEST['state']);
   }
+
   return $variable;
 }
 
@@ -648,7 +649,7 @@ function showStateOverview($state) {
   $query =new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'state')
-    ->entityCondition('title', $state)
+    ->propertyCondition('title', $state)
     ->range(0, 1);
 
   $result = $query->execute();
@@ -674,7 +675,7 @@ function showAttractions($state) {
   $query =new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'state')
-    ->entityCondition('title', $state)
+    ->propertyCondition('title', $state)
     ->range(0, 1);
 
   $result = $query->execute();
@@ -699,7 +700,7 @@ function showRules($state) {
   $query =new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'state')
-    ->entityCondition('title', $state)
+    ->propertyCondition('title', $state)
     ->range(0, 1);
 
   $result = $query->execute();
@@ -724,7 +725,7 @@ function showLinks($state) {
   $query =new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'state')
-    ->entityCondition('title', $state)
+    ->propertyCondition('title', $state)
     ->range(0, 1);
 
   $result = $query->execute();
@@ -1069,11 +1070,12 @@ function checkAssnDeal($assnID) {
 }
 
 function getTimes($nid) {
-  $query = db_query("SELECT field_deal_start_value, field_deal_end_value FROM {content_type_deal} WHERE nid = %d ORDER BY vid DESC LIMIT 1" , $nid);
-  while ($row = db_fetch_array($query)) {
-    $result["start"] = $row["field_deal_start_value"];
-    $result["end"] = $row["field_deal_end_value"];
-  }
+  $node = node_load($nid);
+
+
+  $result["start"] = $node->field_deal_start[LANGUAGE_NONE][0]["value"];
+  $result["end"] = $node->field_deal_end[LANGUAGE_NONE][0]["value"];
+
   return $result;
 }
 

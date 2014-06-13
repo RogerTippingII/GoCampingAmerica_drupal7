@@ -111,23 +111,23 @@
 <?php
 function getStateParks($said, $suid) {
   //echo $said . "<br />";
-  $query = db_query("SELECT n.nid, n.title, l.province FROM {node} n, {content_type_camp} c, {location} l, {location_instance} li WHERE n.nid = c.nid AND l.lid = li.lid AND li.nid = n.nid AND n.status = 1 AND (c.field_camp_state_assnid_value = %d OR c.field_camp_stateassn_user_uid = %d) ORDER BY n.title ASC", $said, $suid);
+  $query = db_query("SELECT n.nid, n.title, l.province FROM {node} n, field_data_field_camp_state_assnid c1, field_data_field_camp_stateassn_user c2, {location} l, {location_instance} li WHERE n.nid = c1.entity_id AND n.nid = c2.entity_id AND l.lid = li.lid AND li.nid = n.nid AND n.status = 1 AND (c1.field_camp_state_assnid_value = :said OR c2.field_camp_stateassn_user_uid = :suid) ORDER BY n.title ASC", array(':said' => $said, ':suid' => $suid));
   $x = 0;
-  while ($row = db_fetch_array($query)) {
-    if (isLatest($row["nid"], $said, $suid)) {
-      $result[$x]["nid"] = $row["nid"];
+  while ($row = $query->fetchAssoc()) {
+
+    $result[$x]["nid"] = $row["nid"];
 	  $result[$x]["title"] = $row["title"];
 	  $result[$x]["province"] = $row["province"];
 	  $result[$x]["status"] = getStatus($row["nid"]);
 	  $x++;
-	}
+
   }
   return $result;
 }
 
 function getStatus($nid) {
-  $query = db_query("SELECT field_camp_status_value FROM {content_type_camp} WHERE nid = %d ORDER BY vid DESC LIMIT 1", $nid);
-  while ($row = db_fetch_array($query)) {
+  $query = db_query("SELECT field_camp_status_value FROM field_data_field_camp_status WHERE entity_id = :nid LIMIT 1", array(':nid' => $nid));
+  while ($row = $query->fetchAssoc()) {
     $result = $row["field_camp_status_value"];
   }
   if ($result) {
@@ -136,19 +136,9 @@ function getStatus($nid) {
   return;
 }
 
-function isLatest($nid, $said, $suid) {
-  $result = 0;
-  $query = db_query("SELECT field_camp_state_assnid_value, field_camp_stateassn_user_uid FROM {content_type_camp} WHERE nid = %d ORDER BY vid DESC LIMIT 1", $nid);
-  while ($row = db_fetch_array($query)) {
-    if ($row["field_camp_state_assnid_value"] == $said || $row["field_camp_stateassn_user_uid"] == $suid) {
-      $result = 1;
-    }
-  }
-  return $result;
-}
 
 function getParkDetails($uid) {
-  $query = db_query("SELECT title, nid FROM {node} WHERE uid = %d AND type = 'camp' LIMIT 1", $uid);
+  $query = db_query("SELECT title, nid FROM {node} WHERE uid = :uid AND type = 'camp' LIMIT 1", array(':uid' => $uid));
   while ($row = db_fetch_array($query)) {
     $result["nid"] = $row["nid"];
 	$result["title"] = $row["title"];
@@ -159,16 +149,16 @@ function getParkDetails($uid) {
 
 function getParkAlias($nid) {
   $src = "node/" . $nid;
-  $query = db_query("SELECT dst FROM {url_alias} WHERE src = '%s' LIMIT 1", $src);
-  while ($row = db_fetch_array($query)) {
-    $result = $row["dst"];
+  $query = db_query("SELECT alias FROM {url_alias} WHERE source = :src LIMIT 1", array(':src' => $src));
+  while ($row = $query->fetchAssoc()) {
+    $result = $row["alias"];
   }
   return $result;
 }
 
 function getParkUID($profileID) {
-  $query = db_query("SELECT uid FROM {users} WHERE name = '%s' LIMIT 1", $profileID);
-  while ($row = db_fetch_array($query)) {
+  $query = db_query("SELECT uid FROM {users} WHERE name = :profileID LIMIT 1", array(':profileID' => $profileID));
+  while ($row = $query->fetchAssoc()) {
     $uid = $row["uid"];
   }
   return $uid;

@@ -107,11 +107,31 @@ function gca_search_block_info(){
     'cache' => DRUPAL_CACHE_PER_ROLE
   );
 
+  $blocks["redirect_user_profile"] = array(
+    'info' => t("Redirect to User Profile"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
+  $blocks["redirect_user_edit_profile"] = array(
+    'info' => t("Redirect to User Edit Profile"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
   return $blocks;
 }
 
 function gca_search_block_view($delta = ''){
   switch($delta){
+    case 'redirect_user_edit_profile':
+      ob_start();
+      require(__DIR__ . "/blocks/redirect_user_edit_profile.php");
+      $block["content"] = ob_get_clean();
+      return $block;
+    case 'redirect_user_profile':
+      ob_start();
+      require(__DIR__ . "/blocks/redirect_user_profile.php");
+      $block["content"] = ob_get_clean();
+      return $block;
     case 'gca_tumblr_link_list':
       ob_start();
       require(__DIR__ . "/blocks/widget_tumbler_link_list.php");
