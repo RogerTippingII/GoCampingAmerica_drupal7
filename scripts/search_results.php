@@ -278,6 +278,7 @@ function getResults($terms, $loc, $radius, $testing, $offset, $originalTerms, $o
   if (isset($loc) && isset($radius)) {
     // A latitude, longitude and radius have been specified, so get an array of matching parks
     $fullResult = getParksGeo($loc, $radius, $optin, $testing);
+
     jsLog("fullResult: " . count($fullResult));
     if ($testing == 2) {
       echo "getResults: fullResult array: " . count($fullResult) . "<br />";
@@ -322,9 +323,9 @@ function getParksGeo($loc, $radius, $optin, $testing)
             n.nid,
 						( 3959 * acos( cos( radians(" . $loc[1] . ") ) * cos( radians( l.latitude ) ) * cos( radians( l.longitude ) - radians(" . $loc[0] . ") ) + sin( radians(" . $loc[1] . ") ) * sin( radians( l.latitude ) ) ) ) AS distance
 					FROM {location} l, 
-						{content_field_location} li,
+						{location_instance} li,
 						{node} n
-					WHERE l.lid = li.field_location_lid
+					WHERE l.lid = li.lid
 						AND li.vid = n.vid
 						AND n.type = 'camp' 
 						AND n.status = 1 
@@ -343,11 +344,11 @@ function getParksGeo($loc, $radius, $optin, $testing)
 
   $camps = entity_load('node', $camp_nids);
   foreach ($camps as $nid => $entity) {
-    if (($entity->title != " ")) {
+    if (($entity->title != " " && $entity->field_camp_status[LANGUAGE_NONE][0]["value"] == 'active')) {
 
       //if (($optin == "yes" && getOptin($row->nid) == "yes") || $optin == "no") {
       $extended = $entity->field_park_extended_stay[LANGUAGE_NONE][0]["value"];
-      if ($extended != 1) {
+//      if ($extended != 1) {
         $x++;
         $result[$nid][street] = $entity->field_location[LANGUAGE_NONE][0]["street"];
         $result[$nid][city] = $entity->field_location[LANGUAGE_NONE][0]["city"];
@@ -361,7 +362,7 @@ function getParksGeo($loc, $radius, $optin, $testing)
           $result[$nid]["promo"] = $entity->field_camp_promo_text[LANGUAGE_NONE][0]["value"];
         }
         $result[$nid]["extended_stay"] = $extended;
-      }
+//      }
       //}
 
     }
@@ -719,7 +720,7 @@ function displayInfo($nid, $distance, $radius, $stateFlag, $featuredFlag)
     }
     echo "'>\n";
     echo "<div class='search-review-widget'>";
-    $reviewsCheck = file_get_contents("http://travel.guestrated.com/Widget/Pages/SearchResultRating.aspx?custtypeid=8&portalid=3&customerid=" . $nodeInfo->field_camp_guestreview_id["LANGUAGE_NONE"][0][value]);
+    $reviewsCheck = file_get_contents("http://travel.guestrated.com/Widget/Pages/SearchResultRating.aspx?custtypeid=8&portalid=3&customerid=" . $nodeInfo->field_camp_guestreview_id[LANGUAGE_NONE][0]["value"]);
     $checkPos = strpos($reviewsCheck, "9,9999review");
     if ($checkPos === false) {
       //echo "<iframe src='/scripts/review_widget.php?id=" . $nodeInfo->field_camp_guestreview_id[0][value] . "' width='215' height='75'></iframe>";
@@ -780,7 +781,7 @@ function getLatestInfo($nid, $vid)
 function getCityState($entity)
 {
 
-  $citystate = $entity->field_location["LANGUAGE_NONE"][0]["street"] . "<br />" . $entity->field_location["LANGUAGE_NONE"][0]["city"] . ", " . $entity->field_location["LANGUAGE_NONE"][0]["province"] . "&nbsp;&nbsp;" . $entity->field_location["LANGUAGE_NONE"][0]["postal_code"];
+  $citystate = $entity->field_location[LANGUAGE_NONE][0]["street"] . "<br />" . $entity->field_location[LANGUAGE_NONE][0]["city"] . ", " . $entity->field_location[LANGUAGE_NONE][0]["province"] . "&nbsp;&nbsp;" . $entity->field_location[LANGUAGE_NONE][0]["postal_code"];
 
   return $citystate;
 }
@@ -1048,7 +1049,7 @@ function getFeaturedParks($list)
   $result = array();
 
   foreach ($list as $park) {
-    $query = db_query("SELECT field_park_tier_value FROM {field_data_field_park_tier} WHERE nid = :nid ORDER BY vid DESC LIMIT 1", array(":nid" => $park));
+    $query = db_query("SELECT field_park_tier_value FROM {field_data_field_park_tier} WHERE entity_id = :nid LIMIT 1", array(":nid" => $park));
     while ($row = $query->fetchAssoc()) {
       if ($row["field_park_tier_value"] > 3) {
         $result[] = $park;
@@ -1083,10 +1084,10 @@ function getNewestVid($nid)
 
 function checkForDeal($nid)
 {
-  $query = db_query("SELECT field_park_state_assn_optin_value, field_camp_state_assnid_value FROM {content_type_camp} WHERE nid = :nid ORDER BY vid DESC LIMIT 1", array(":nid" => $nid));
+  $query = db_query("SELECT field_park_state_assn_optin_value, field_camp_state_assnid_value FROM {field_data_field_park_state_assn_optin} f1, {field_data_field_camp_state_assnid} f2 WHERE f1.entity_id = :nid AND f2.entity_id = :nid LIMIT 1", array(":nid" => $nid));
   while ($row = $query->fetchAssoc()) {
     // Check whether the park is opted in for state association deals
-    if ($row["field_park_state_assn_optin_value"] == "on") {
+    if ($row["field_park_state_assn_optin_value"]) {
 
       // Check whether the state association has an active deal
       $assnDeal = checkAssnDeal($row["field_camp_state_assnid_value"]);
@@ -1124,7 +1125,7 @@ function checkAssnDeal($assnID)
 
 function getTimes($nid)
 {
-  $query = db_query("SELECT field_deal_start_value, field_deal_end_value FROM {content_type_deal} WHERE nid = :nid ORDER BY vid DESC LIMIT 1", array(':nid' => $nid));
+  $query = db_query("SELECT field_deal_start_value, field_deal_end_value FROM {field_data_field_deal_start} f1, {field_data_field_deal_end} f1 WHERE f1.entity_id = :nid AND f2.entity_id = :nid LIMIT 1", array(':nid' => $nid));
   //while ($row = db_fetch_array($query)) {
   foreach($query as $row) {
     $result["start"] = $row->field_deal_start_value;
