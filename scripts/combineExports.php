@@ -3,7 +3,7 @@ echo $_SERVER["DOCUMENT_ROOT"] . "<br />";
 
 //get the list of all files and delete the oldest if there are more than $maxFileNumber
 $maxFileNumber = 10;
-$dumpFiles = glob('/var/www/vhosts/gocampingamerica.com/httpdocs/sites/default/files/dumps/*');
+$dumpFiles = glob('/var/www/vhosts/gocampingamerica.com/httpdocs_drupal7/sites/default/files/dumps/*');
 
 if(count($dumpFiles) >= $maxFileNumber){
   sort($dumpFiles);
@@ -14,7 +14,7 @@ if(count($dumpFiles) >= $maxFileNumber){
 $combinedFile = $_SERVER["DOCUMENT_ROOT"] . "/sites/default/files/dumps/" . date("Ymd", mktime()) . ".csv";
 $deleteFile = $_SERVER["DOCUMENT_ROOT"] . "/sites/default/files/dumps/" . (date("Ymd", mktime()) - 7) . ".csv";
 
-$files = glob('/var/www/vhosts/gocampingamerica.com/httpdocs/sites/default/files/dumps/partials/*'); 
+$files = glob('/var/www/vhosts/gocampingamerica.com/httpdocs_drupal7/sites/default/files/dumps/partials/*'); 
 
 foreach ($files as $file) {
   $start = strrpos($file, "/") + 1;

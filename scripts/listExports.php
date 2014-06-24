@@ -1,6 +1,6 @@
 <?php
 echo "The following database exports are available. To download, right click on the desired file and select 'Save As'.<br /><br />";
-$files = glob('/var/www/vhosts/gocampingamerica.com/httpdocs/sites/default/files/dumps/*'); 
+$files = glob('/var/www/vhosts/gocampingamerica.com/httpdocs_drupal7/sites/default/files/dumps/*'); 
 
 foreach ($files as $file) {
   $start = strrpos($file, "/") + 1;

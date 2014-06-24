@@ -2,6 +2,7 @@
 
 // Bootstrap
 chdir($_SERVER['DOCUMENT_ROOT']);
+define('DRUPAL_ROOT', __DIR__ . "/..");
 global $base_url;
 $base_url = 'http://'.$_SERVER['HTTP_HOST'];
 require_once './includes/bootstrap.inc';
@@ -16,8 +17,6 @@ module_invoke('node', 'boot');
 if (isset($_REQUEST["n"])) {
   $nodeInfo = node_load($_REQUEST["n"]);
 }
-
-
 
 $result["drupalID"] = $nodeInfo->nid;
 $result["arvcID"] = $nodeInfo->name;
@@ -110,12 +109,30 @@ $filteredSlideshow = array_filter($nodeInfo->field_camp_slideshow, function($pho
 
 $result["hasPhotos"] = (count($filteredSlideshow) > 0)?'yes':'no';
 
+$vocabularies = array('taxonomy_vocabulary_5', 'taxonomy_vocabulary_17', 'taxonomy_vocabulary_11', 'taxonomy_vocabulary_1', 'taxonomy_vocabulary_18', 
+	'taxonomy_vocabulary_2', 'taxonomy_vocabulary_6', 'taxonomy_vocabulary_3', 'taxonomy_vocabulary_12');
+
+foreach($vocabularies as $vocabulary) {
+	$vid = str_replace("taxonomy_vocabulary_","",$vocabulary);
+	$voc = taxonomy_vocabulary_load($vid);
+	$result[strtolower($voc->name)] = "";
+	$terms = array();
+	if (isset($nodeInfo->{$vocabulary}[LANGUAGE_NONE]) && is_array($nodeInfo->{$vocabulary}[LANGUAGE_NONE]) && count($nodeInfo->{$vocabulary}[LANGUAGE_NONE]) > 0) {
+		foreach($nodeInfo->{$vocabulary}[LANGUAGE_NONE] as $key => $term) {
+			$t = taxonomy_term_load($term['tid']);
+			$terms[] = $t->name;
+		}
+	}
+	$result[strtolower($voc->name)] = implode(", ", $terms);
+}
+
+/*
 $result["tags"] = "";
 foreach ($nodeInfo->taxonomy as $key => $value) {
  $result["tags"] .= $value->name . ", ";
 }
 $result["tags"] = substr($result["tags"], 0, -2);
-
+*/
 
 ksort($result);
 

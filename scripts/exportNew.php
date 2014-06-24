@@ -5,6 +5,7 @@
 
 // Bootstrap
 chdir($_SERVER['DOCUMENT_ROOT']);
+define('DRUPAL_ROOT', __DIR__ . "/..");
 global $base_url;
 $base_url = 'http://'.$_SERVER['HTTP_HOST'];
 require_once './includes/bootstrap.inc';
@@ -38,7 +39,7 @@ for ($i = 0; $i < 1; $i++) {
   if ($parks) {
 
     foreach ($parks as $park) {
-      $parkData[] = unserialize(file_get_contents("http://gca.dev/scripts/getParkData.php?n=" . $park));
+      $parkData[] = unserialize(file_get_contents("http://www.gocampingamerica.com/scripts/getParkData.php?n=" . $park));
     }
 
     echo "Start: " . date("m j, Y g:i a", $startTime) . "<br />";
@@ -74,9 +75,12 @@ function getParks($off) {
   } else {
     $offset = 0;
   }
-  $query = db_query("SELECT n.nid FROM {node} n WHERE n.type = 'camp' AND n.status = 1 LIMIT %d, %d", $offset, $limit);
-  while ($row = $query->fetchAssoc()) {
-    $result[] = $row["nid"];
+  //$query = db_query("SELECT n.nid FROM {node} n WHERE n.type = 'camp' AND n.status = 1 LIMIT %d, %d", $offset, $limit);
+  $query = db_query("SELECT n.nid FROM {node} n WHERE n.type = 'camp' AND n.status = 1 LIMIT " . $offset . ", " . $limit);
+//  while ($row = $query->fetchAssoc()) {
+  foreach($query as $row) {
+    //$result[] = $row["nid"];
+    $result[] = $row->nid;
   }
   if (isset($result)) {
     return $result;
