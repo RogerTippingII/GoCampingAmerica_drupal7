@@ -27,24 +27,6 @@ if ($detect->isMobile()) {
 }
 
 ?>
-<!DOCTYPE html>
-<html lang="<?php echo $language->language ?>" dir="<?php echo $language->dir ?>">
-
-<head>
-  <?php print $head ?>
-  <title><?php print $head_title ?></title>
-  <?php print $styles ?>
-  <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Raleway:100' rel='stylesheet' type='text/css'>
-  <?php print $scripts ?>
-  <meta name="google-site-verification" content="uV16LQUNoMB-U4AaDyST8Sh3u97LAwKBS2h3yweC2x0" />
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-</head>
-
-<body class="<?php print $body_classes; ?>">
   <div id="dark-overlay-front" class="hide"></div>
     <div id="youtube-wrapper">
       <div id="youtube-close" class="hide"><a name="youtube-video"></a><img src="/sites/all/themes/gca_new/images/icon-close.png" align="right" id="youtube-close-button" /></div>
@@ -106,8 +88,6 @@ if ($detect->isMobile()) {
   </div> <!-- /#copyright-wrapper -->
   <?php print $closure ?>
   <?php print $page_bottom; ?>
-</body>
-</html>
 <?php
 function displayNav($user) {
   $links = getNavLinks(0);

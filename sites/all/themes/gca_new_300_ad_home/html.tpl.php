@@ -32,7 +32,7 @@
   <script type="text/javascript" src="/scripts/gca_jquery_front.js"></script>
   <script type="text/javascript" src="/scripts/gca_jquery.js?r=<?php echo $random; ?>"></script>
   <script type="text/javascript" src="/scripts/tablesorter/jquery.tablesorter.js"></script>
-  <script type="text/javascript" "/scripts/jquery.gmap-1.1.0-min.js"></script>
+  <script type="text/javascript" src="/scripts/jquery.gmap-1.1.0-min.js"></script>
   <script type="text/javascript" language="javascript" src="/scripts/datatable/media/js/jquery.dataTables.js"></script>
   <link href="/scripts/datatable/media/css/demo_page.css" rel="stylesheet" />
   <link href="/scripts/datatable/media/css/demo_table.css" rel="stylesheet" />
@@ -61,6 +61,10 @@
       }
     });
   </script>
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
 </head>
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>
 <div id="skip-link">
