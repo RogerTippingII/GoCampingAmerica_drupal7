@@ -26,6 +26,7 @@ $result["title"] = $nodeInfo->title;
 $result["path"] = $nodeInfo->path;
 $result["website"] = $nodeInfo->field_camp_website[LANGUAGE_NONE][0]["url"];
 $result["status"] = $nodeInfo->field_camp_status[LANGUAGE_NONE][0]["value"];
+$result["region"] = (isset($nodeInfo->field_region[LANGUAGE_NONE][0]["value"]) ? $nodeInfo->field_region[LANGUAGE_NONE][0]["value"] : '');
 //$result["z20amp"] = $nodeInfo->field_camp20amp[LANGUAGE_NONE][0]["value"];
 //$result["z30amp"] = $nodeInfo->field_camp30amp[LANGUAGE_NONE][0]["value"];
 //$result["z50amp"] = $nodeInfo->field_camp50amp[LANGUAGE_NONE][0]["value"];
@@ -115,15 +116,19 @@ $vocabularies = array('taxonomy_vocabulary_5', 'taxonomy_vocabulary_17', 'taxono
 foreach($vocabularies as $vocabulary) {
 	$vid = str_replace("taxonomy_vocabulary_","",$vocabulary);
 	$voc = taxonomy_vocabulary_load($vid);
-	$result[strtolower($voc->name)] = "";
-	$terms = array();
+	$terms = entity_load('taxonomy_term', FALSE, array('vid' => $voc->vid));
+
+	foreach($terms as $key => $term) {
+		$result["term_" . str_replace(" ","_", strtolower($term->name))] = "0";
+	}
 	if (isset($nodeInfo->{$vocabulary}[LANGUAGE_NONE]) && is_array($nodeInfo->{$vocabulary}[LANGUAGE_NONE]) && count($nodeInfo->{$vocabulary}[LANGUAGE_NONE]) > 0) {
 		foreach($nodeInfo->{$vocabulary}[LANGUAGE_NONE] as $key => $term) {
-			$t = taxonomy_term_load($term['tid']);
-			$terms[] = $t->name;
+			$tid = $term['tid'];
+			$t = $terms[$tid];
+			$result["term_" . str_replace(" ","_", strtolower($t->name))] = "1";
 		}
 	}
-	$result[strtolower($voc->name)] = implode(", ", $terms);
+
 }
 
 /*
