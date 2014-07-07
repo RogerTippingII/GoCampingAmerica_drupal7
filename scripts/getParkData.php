@@ -2,6 +2,7 @@
 
 // Bootstrap
 chdir($_SERVER['DOCUMENT_ROOT']);
+define('DRUPAL_ROOT', __DIR__ . "/..");
 global $base_url;
 $base_url = 'http://'.$_SERVER['HTTP_HOST'];
 require_once './includes/bootstrap.inc';
@@ -17,8 +18,6 @@ if (isset($_REQUEST["n"])) {
   $nodeInfo = node_load($_REQUEST["n"]);
 }
 
-
-
 $result["drupalID"] = $nodeInfo->nid;
 $result["arvcID"] = $nodeInfo->name;
 $result["changed"] = $nodeInfo->changed;
@@ -27,6 +26,7 @@ $result["title"] = $nodeInfo->title;
 $result["path"] = $nodeInfo->path;
 $result["website"] = $nodeInfo->field_camp_website[LANGUAGE_NONE][0]["url"];
 $result["status"] = $nodeInfo->field_camp_status[LANGUAGE_NONE][0]["value"];
+$result["region"] = (isset($nodeInfo->field_region[LANGUAGE_NONE][0]["value"]) ? $nodeInfo->field_region[LANGUAGE_NONE][0]["value"] : '');
 //$result["z20amp"] = $nodeInfo->field_camp20amp[LANGUAGE_NONE][0]["value"];
 //$result["z30amp"] = $nodeInfo->field_camp30amp[LANGUAGE_NONE][0]["value"];
 //$result["z50amp"] = $nodeInfo->field_camp50amp[LANGUAGE_NONE][0]["value"];
@@ -110,12 +110,34 @@ $filteredSlideshow = array_filter($nodeInfo->field_camp_slideshow, function($pho
 
 $result["hasPhotos"] = (count($filteredSlideshow) > 0)?'yes':'no';
 
+$vocabularies = array('taxonomy_vocabulary_5', 'taxonomy_vocabulary_17', 'taxonomy_vocabulary_11', 'taxonomy_vocabulary_1', 'taxonomy_vocabulary_18', 
+	'taxonomy_vocabulary_2', 'taxonomy_vocabulary_6', 'taxonomy_vocabulary_3', 'taxonomy_vocabulary_12');
+
+foreach($vocabularies as $vocabulary) {
+	$vid = str_replace("taxonomy_vocabulary_","",$vocabulary);
+	$voc = taxonomy_vocabulary_load($vid);
+	$terms = entity_load('taxonomy_term', FALSE, array('vid' => $voc->vid));
+
+	foreach($terms as $key => $term) {
+		$result["term_" . str_replace(" ","_", strtolower($term->name))] = "0";
+	}
+	if (isset($nodeInfo->{$vocabulary}[LANGUAGE_NONE]) && is_array($nodeInfo->{$vocabulary}[LANGUAGE_NONE]) && count($nodeInfo->{$vocabulary}[LANGUAGE_NONE]) > 0) {
+		foreach($nodeInfo->{$vocabulary}[LANGUAGE_NONE] as $key => $term) {
+			$tid = $term['tid'];
+			$t = $terms[$tid];
+			$result["term_" . str_replace(" ","_", strtolower($t->name))] = "1";
+		}
+	}
+
+}
+
+/*
 $result["tags"] = "";
 foreach ($nodeInfo->taxonomy as $key => $value) {
  $result["tags"] .= $value->name . ", ";
 }
 $result["tags"] = substr($result["tags"], 0, -2);
-
+*/
 
 ksort($result);
 
