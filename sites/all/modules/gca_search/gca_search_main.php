@@ -919,7 +919,7 @@ function getResultAlias($nid) {
   $target = "node/" . $nid;
   $query = db_query("SELECT alias FROM {url_alias} WHERE source =:target", array('target' => $target));
   while ($row = $query->fetchObject()) {
-    $result = $row->dst;
+    $result = $row->alias;
   }
   if (!$result) {
     return $target;

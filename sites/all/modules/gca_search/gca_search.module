@@ -117,11 +117,21 @@ function gca_search_block_info(){
     'cache' => DRUPAL_CACHE_PER_ROLE
   );
 
+  $blocks["redirect_user_park"] = array(
+    'info' => t("Redirect to User Park"),
+    'cache' => DRUPAL_CACHE_PER_ROLE
+  );
+
   return $blocks;
 }
 
 function gca_search_block_view($delta = ''){
   switch($delta){
+    case 'redirect_user_park':
+      ob_start();
+      require(__DIR__ . "/blocks/redirect_user_park.php");
+      $block["content"] = ob_get_clean();
+      return $block;
     case 'redirect_user_edit_profile':
       ob_start();
       require(__DIR__ . "/blocks/redirect_user_edit_profile.php");

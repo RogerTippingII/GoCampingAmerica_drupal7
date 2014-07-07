@@ -80,6 +80,8 @@ function getParkAlias($src) {
   while ($row = $query->fetchAssoc()) {
     $result = $row["alias"];
   }
+
+  if($result == '') return $src;
   return $result;
 }
 

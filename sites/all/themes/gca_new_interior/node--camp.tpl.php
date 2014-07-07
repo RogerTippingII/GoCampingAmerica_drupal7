@@ -628,9 +628,9 @@ markers=color:blue%7Clabel:%7C<?php echo $node->field_location[LANGUAGE_NONE][0]
       </div>
     </div>
 	<?php
-	echo "<pre style='display:none;'>";
-	print_r($node);
-	echo "</pre>";
+	//echo "<pre style='display:none;'>";
+	//print_r($node);
+	//echo "</pre>";
 	?>
   </div>
 

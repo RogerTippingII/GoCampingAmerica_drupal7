@@ -5,19 +5,21 @@
 /* Updated 06/30/2013 */
 /* ****************** */
 
-require_once('/var/www/vhosts/gocampingamerica.com/httpdocs/scripts/PHPExcel.php');
+
 
 // DRUPAL BOOTSTRAP
 chdir($_SERVER['DOCUMENT_ROOT']);
+define('DRUPAL_ROOT', __DIR__ . "/..");
 global $base_url;
-$base_url = 'http://'.$_SERVER['HTTP_HOST'];
+$base_url = 'http://' . $_SERVER['HTTP_HOST'];
 require_once './includes/bootstrap.inc';
 require_once './includes/common.inc';
 require_once './includes/module.inc';
-drupal_bootstrap(DRUPAL_BOOTSTRAP_DATABASE);
-drupal_bootstrap(DRUPAL_BOOTSTRAP_SESSION);
+drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 drupal_load('module', 'node');
 module_invoke('node', 'boot');
+
+require_once('scripts/PHPExcel.php');
 
 // EXECUTE
 
@@ -56,8 +58,8 @@ function doDataDump() {
 	  $semiResult[$x]["Changed By"] = getChangedBy($instance["user"]);
       $semiResult[$x]["pkID"] = $instance["username"];
 
-	  if ($instance["data"]->field_camp_status[0]["value"] != $instance["previous"]["data"]->field_camp_status[0]["value"]) {
-	    $semiResult[$x]["Status"] = $instance["previous"]["data"]->field_camp_status[0]["value"] . " -> " . $instance["data"]->field_camp_status[0]["value"];
+	  if ($instance["data"]->field_camp_status[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_camp_status[LANGUAGE_NONE][0]["value"]) {
+	    $semiResult[$x]["Status"] = $instance["previous"]["data"]->field_camp_status[LANGUAGE_NONE][0]["value"] . " -> " . $instance["data"]->field_camp_status[LANGUAGE_NONE][0]["value"];
 	  } else {
 	    $semiResult[$x]["Status"] = "";
 	  }
@@ -68,112 +70,112 @@ function doDataDump() {
 	    $semiResult[$x]["Member Name"] = "";
 	  }
 
-      if ($instance["data"]->field_camp_website[0]["url"] != $instance["previous"]["data"]->field_camp_website[0]["url"]) {
-        if($instance["data"]->field_camp_website[0]["url"] == ""){
-          $semiResult[$x]["Website"] = $instance["previous"]["data"]->field_camp_website[0]["url"] . " -> " . "DELETED";
+      if ($instance["data"]->field_camp_website[LANGUAGE_NONE][0]["url"] != $instance["previous"]["data"]->field_camp_website[LANGUAGE_NONE][0]["url"]) {
+        if($instance["data"]->field_camp_website[LANGUAGE_NONE][0]["url"] == ""){
+          $semiResult[$x]["Website"] = $instance["previous"]["data"]->field_camp_website[LANGUAGE_NONE][0]["url"] . " -> " . "DELETED";
         }
         else {
-          $semiResult[$x]["Website"] = (($instance["previous"]["data"]->field_camp_website[0]["url"] != "")?$instance["previous"]["data"]->field_camp_website[0]["url"]:"NONE") . " -> " . $instance["data"]->field_camp_website[0]["url"];
+          $semiResult[$x]["Website"] = (($instance["previous"]["data"]->field_camp_website[LANGUAGE_NONE][0]["url"] != "")?$instance["previous"]["data"]->field_camp_website[LANGUAGE_NONE][0]["url"]:"NONE") . " -> " . $instance["data"]->field_camp_website[LANGUAGE_NONE][0]["url"];
         }
       } else {
         $semiResult[$x]["Website"] = "";
       }
 	        
-	  if ($instance["data"]->field_location[0]["street"] != $instance["previous"]["data"]->field_location[0]["street"]) {
-	    if ($instance["data"]->field_location[0]["street"] == "") {
-		    $semiResult[$x]["Location Address 1"] = $instance["previous"]["data"]->field_location[0]["street"] . " -> " . "DELETED";
+	  if ($instance["data"]->field_location[LANGUAGE_NONE][0]["street"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["street"]) {
+	    if ($instance["data"]->field_location[LANGUAGE_NONE][0]["street"] == "") {
+		    $semiResult[$x]["Location Address 1"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["street"] . " -> " . "DELETED";
 		  } else {
-	      $semiResult[$x]["Location Address 1"] = $instance["previous"]["data"]->field_location[0]["street"] . " -> " . $instance["data"]->field_location[0]["street"];
+	      $semiResult[$x]["Location Address 1"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["street"] . " -> " . $instance["data"]->field_location[LANGUAGE_NONE][0]["street"];
 	    }
 	  } else {
 	    $semiResult[$x]["Location Address 1"] = "";
 	  }
 	  
-	  if ($instance["data"]->field_location[0]["additional"] != $instance["previous"]["data"]->field_location[0]["additional"]) {
-	    if ($instance["data"]->field_location[0]["additional"] == "") {
-		  $semiResult[$x]["Location Address 2"] = $instance["previous"]["data"]->field_location[0]["additional"] . " -> " . "DELETED";
+	  if ($instance["data"]->field_location[LANGUAGE_NONE][0]["additional"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["additional"]) {
+	    if ($instance["data"]->field_location[LANGUAGE_NONE][0]["additional"] == "") {
+		  $semiResult[$x]["Location Address 2"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["additional"] . " -> " . "DELETED";
 		} else {
-	      $semiResult[$x]["Location Address 2"] = $instance["previous"]["data"]->field_location[0]["additional"] . " -> " . $instance["data"]->field_location[0]["additional"];
+	      $semiResult[$x]["Location Address 2"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["additional"] . " -> " . $instance["data"]->field_location[LANGUAGE_NONE][0]["additional"];
 	    }
 	  } else {
 	    $semiResult[$x]["Location Address 2"] = "";
 	  }
 	  
-	  if ($instance["data"]->field_location[0]["city"] != $instance["previous"]["data"]->field_location[0]["city"]) {
-	    if ($instance["data"]->field_location[0]["city"] == "") {
-		  $semiResult[$x]["Location City"] = $instance["previous"]["data"]->field_location[0]["city"] . " -> " . "DELETED";
+	  if ($instance["data"]->field_location[LANGUAGE_NONE][0]["city"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["city"]) {
+	    if ($instance["data"]->field_location[LANGUAGE_NONE][0]["city"] == "") {
+		  $semiResult[$x]["Location City"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["city"] . " -> " . "DELETED";
 		} else {
-		  $semiResult[$x]["Location City"] = $instance["previous"]["data"]->field_location[0]["city"] . " -> " . $instance["data"]->field_location[0]["city"];
+		  $semiResult[$x]["Location City"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["city"] . " -> " . $instance["data"]->field_location[LANGUAGE_NONE][0]["city"];
 	    }
 	  } else {
 	    $semiResult[$x]["Location City"] = "";
 	  }
 	  
-	  if ($instance["data"]->field_location[0]["province"] != $instance["previous"]["data"]->field_location[0]["province"]) {
-	    if ($instance["data"]->field_location[0]["province"] == "") {
-		  $semiResult[$x]["Location State"] = $instance["previous"]["data"]->field_location[0]["province"] . " -> " . "DELETED";
+	  if ($instance["data"]->field_location[LANGUAGE_NONE][0]["province"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["province"]) {
+	    if ($instance["data"]->field_location[LANGUAGE_NONE][0]["province"] == "") {
+		  $semiResult[$x]["Location State"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["province"] . " -> " . "DELETED";
 		} else {
-		  $semiResult[$x]["Location State"] = $instance["previous"]["data"]->field_location[0]["province"] . " -> " . $instance["data"]->field_location[0]["province"];
+		  $semiResult[$x]["Location State"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["province"] . " -> " . $instance["data"]->field_location[LANGUAGE_NONE][0]["province"];
 	    }
 	  } else {
 	    $semiResult[$x]["Location State"] = "";
 	  }
 	  
-	  if ($instance["data"]->field_location[0]["postal_code"] != $instance["previous"]["data"]->field_location[0]["postal_code"]) {
-	    if ($instance["data"]->field_location[0]["postal_code"] == "") {
-		  $semiResult[$x]["Location ZIP"] = $instance["previous"]["data"]->field_location[0]["postal_code"] . " -> " . "DELETED";
+	  if ($instance["data"]->field_location[LANGUAGE_NONE][0]["postal_code"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["postal_code"]) {
+	    if ($instance["data"]->field_location[LANGUAGE_NONE][0]["postal_code"] == "") {
+		  $semiResult[$x]["Location ZIP"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["postal_code"] . " -> " . "DELETED";
 		} else {
-	      $semiResult[$x]["Location ZIP"] = $instance["previous"]["data"]->field_location[0]["postal_code"] . " -> " . $instance["data"]->field_location[0]["postal_code"];
+	      $semiResult[$x]["Location ZIP"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["postal_code"] . " -> " . $instance["data"]->field_location[LANGUAGE_NONE][0]["postal_code"];
 	    }
 	  } else {
 	    $semiResult[$x]["Location ZIP"] = "";
 	  }
 	  
-	  if ($instance["data"]->field_location[0]["country"] != $instance["previous"]["data"]->field_location[0]["country"]) {
-	    if ($instance["data"]->field_location[0]["country"] == "") {
-		  $semiResult[$x]["Location Country"] = $instance["previous"]["data"]->field_location[0]["country"] . " -> " . "DELETED";
+	  if ($instance["data"]->field_location[LANGUAGE_NONE][0]["country"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["country"]) {
+	    if ($instance["data"]->field_location[LANGUAGE_NONE][0]["country"] == "") {
+		  $semiResult[$x]["Location Country"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["country"] . " -> " . "DELETED";
 		} else {
-		  $semiResult[$x]["Location Country"] = $instance["previous"]["data"]->field_location[0]["country"] . " -> " . $instance["data"]->field_location[0]["country"];
+		  $semiResult[$x]["Location Country"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["country"] . " -> " . $instance["data"]->field_location[LANGUAGE_NONE][0]["country"];
 	    }
 	  } else {
 	    $semiResult[$x]["Location Country"] = "";
 	  }
 	  
-	  if ($instance["data"]->field_camp_phone[0]["number"] != $instance["previous"]["data"]->field_camp_phone[0]["number"]) {
-	    if ($instance["data"]->field_camp_phone[0]["number"] == "") {
-		  $semiResult[$x]["Phone"] = $instance["previous"]["data"]->field_camp_phone[0]["number"] . " -> " . "DELETED";
+	  if ($instance["data"]->field_camp_phone[LANGUAGE_NONE][0]["number"] != $instance["previous"]["data"]->field_camp_phone[LANGUAGE_NONE][0]["number"]) {
+	    if ($instance["data"]->field_camp_phone[LANGUAGE_NONE][0]["number"] == "") {
+		  $semiResult[$x]["Phone"] = $instance["previous"]["data"]->field_camp_phone[LANGUAGE_NONE][0]["number"] . " -> " . "DELETED";
 		} else {
-		  $semiResult[$x]["Phone"] = $instance["previous"]["data"]->field_camp_phone[0]["number"] . " -> " . $instance["data"]->field_camp_phone[0]["number"];
+		  $semiResult[$x]["Phone"] = $instance["previous"]["data"]->field_camp_phone[LANGUAGE_NONE][0]["number"] . " -> " . $instance["data"]->field_camp_phone[LANGUAGE_NONE][0]["number"];
 	    }
 	  } else {
 	    $semiResult[$x]["Phone"] = "";
 	  }
 	  
-	  if ($instance["data"]->field_camp_fax[0]["number"] != $instance["previous"]["data"]->field_camp_fax[0]["number"]) {
-	    if ($instance["data"]->field_camp_fax[0]["number"] == "") {
-		  $semiResult[$x]["Fax"] = $instance["previous"]["data"]->field_camp_fax[0]["number"] . " -> " . "DELETED";
+	  if ($instance["data"]->field_camp_fax[LANGUAGE_NONE][0]["number"] != $instance["previous"]["data"]->field_camp_fax[LANGUAGE_NONE][0]["number"]) {
+	    if ($instance["data"]->field_camp_fax[LANGUAGE_NONE][0]["number"] == "") {
+		  $semiResult[$x]["Fax"] = $instance["previous"]["data"]->field_camp_fax[LANGUAGE_NONE][0]["number"] . " -> " . "DELETED";
 		} else {
-		  $semiResult[$x]["Fax"] = $instance["previous"]["data"]->field_camp_fax[0]["number"] . " -> " . $instance["data"]->field_camp_fax[0]["number"];
+		  $semiResult[$x]["Fax"] = $instance["previous"]["data"]->field_camp_fax[LANGUAGE_NONE][0]["number"] . " -> " . $instance["data"]->field_camp_fax[LANGUAGE_NONE][0]["number"];
 	    }
 	  } else {
 	    $semiResult[$x]["Fax"] = "";
 	  }
 	  
-	  if ($instance["data"]->field_camp_email[0]["email"] != $instance["previous"]["data"]->field_camp_email[0]["email"]) {
-	    if ($instance["data"]->field_camp_email[0]["email"] == "") {
-		  $semiResult[$x]["Email Address"] = $instance["previous"]["data"]->field_camp_email[0]["email"] . " -> " . "DELETED";
+	  if ($instance["data"]->field_camp_email[LANGUAGE_NONE][0]["email"] != $instance["previous"]["data"]->field_camp_email[LANGUAGE_NONE][0]["email"]) {
+	    if ($instance["data"]->field_camp_email[LANGUAGE_NONE][0]["email"] == "") {
+		  $semiResult[$x]["Email Address"] = $instance["previous"]["data"]->field_camp_email[LANGUAGE_NONE][0]["email"] . " -> " . "DELETED";
 		} else {
-		  $semiResult[$x]["Email Address"] = $instance["previous"]["data"]->field_camp_email[0]["email"] . " -> " . $instance["data"]->field_camp_email[0]["email"];
+		  $semiResult[$x]["Email Address"] = $instance["previous"]["data"]->field_camp_email[LANGUAGE_NONE][0]["email"] . " -> " . $instance["data"]->field_camp_email[LANGUAGE_NONE][0]["email"];
 	    }
 	  } else {
 	    $semiResult[$x]["Email Address"] = "";
 	  }
 	  
-	  if ($instance["data"]->field_camp_tollfree_phone_number[0]["number"] != $instance["previous"]["data"]->field_camp_tollfree_phone_number[0]["number"]) {
-	    if ($instance["data"]->field_camp_tollfree_phone_number[0]["number"] == "") {
-		  $semiResult[$x]["Toll-Free Number"] = $instance["previous"]["data"]->field_camp_tollfree_phone_number[0]["number"] .  " -> " . "DELETED";
+	  if ($instance["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"] != $instance["previous"]["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"]) {
+	    if ($instance["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"] == "") {
+		  $semiResult[$x]["Toll-Free Number"] = $instance["previous"]["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"] .  " -> " . "DELETED";
 		} else {
-	      $semiResult[$x]["Toll-Free Number"] = $instance["previous"]["data"]->field_camp_tollfree_phone_number[0]["number"] . " -> " . $instance["data"]->field_camp_tollfree_phone_number[0]["number"];
+	      $semiResult[$x]["Toll-Free Number"] = $instance["previous"]["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"] . " -> " . $instance["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"];
 	    }
 	  } else {
 	    $semiResult[$x]["Toll-Free Number"] = "";
@@ -214,14 +216,14 @@ function checkForChange($instance) {
   if (
     ($instance["park_name"] != $instance["previous"]["data"]->title) ||
   ($instance["data"]->field_camp_website != $instance["previous"]["data"]->field_camp_website) ||
-	($instance["data"]->field_location[0]["street"] != $instance["previous"]["data"]->field_location[0]["street"]) ||
-	($instance["data"]->field_location[0]["additional"] != $instance["previous"]["data"]->field_location[0]["additional"]) ||
-	($instance["data"]->field_location[0]["city"] != $instance["previous"]["data"]->field_location[0]["city"]) ||
-	($instance["data"]->field_location[0]["province"] != $instance["previous"]["data"]->field_location[0]["province"]) ||
-	($instance["data"]->field_camp_phone[0]["number"] != $instance["previous"]["data"]->field_camp_phone[0]["number"]) ||
-	($instance["data"]->field_camp_email[0]["email"] != $instance["previous"]["data"]->field_camp_email[0]["email"]) ||
-	($instance["data"]->field_camp_status[0]["value"] != $instance["previous"]["data"]->field_camp_status[0]["value"]) ||
-	($instance["data"]->field_camp_tollfree_phone_number[0]["number"] != $instance["previous"]["data"]->field_camp_tollfree_phone_number[0]["number"])
+	($instance["data"]->field_location[LANGUAGE_NONE][0]["street"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["street"]) ||
+	($instance["data"]->field_location[LANGUAGE_NONE][0]["additional"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["additional"]) ||
+	($instance["data"]->field_location[LANGUAGE_NONE][0]["city"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["city"]) ||
+	($instance["data"]->field_location[LANGUAGE_NONE][0]["province"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["province"]) ||
+	($instance["data"]->field_camp_phone[LANGUAGE_NONE][0]["number"] != $instance["previous"]["data"]->field_camp_phone[LANGUAGE_NONE][0]["number"]) ||
+	($instance["data"]->field_camp_email[LANGUAGE_NONE][0]["email"] != $instance["previous"]["data"]->field_camp_email[LANGUAGE_NONE][0]["email"]) ||
+	($instance["data"]->field_camp_status[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_camp_status[LANGUAGE_NONE][0]["value"]) ||
+	($instance["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"] != $instance["previous"]["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"])
   ) {
     return 1;
   }
@@ -229,9 +231,9 @@ function checkForChange($instance) {
 }
 
 function getAllChangeIDs($begin, $end) {
-  $query = db_query("SELECT cid, username, park_name, nid, user, modified, data FROM {park_changes} WHERE modified > %d AND modified < %d ORDER BY modified DESC", $begin, $end);
+  $query = db_query("SELECT cid, username, park_name, nid, user, modified, data FROM {park_changes} WHERE modified > :begin AND modified < :end ORDER BY modified DESC", array(':begin' => $begin, ':end' => $end));
   $x = 0;
-  while ($row = db_fetch_array($query)) {
+  while ($row = $query->fetchAssoc()) {
     if (checkGCARole($row["user"]) != 1) {
       $result[$x]["cid"] = $row["cid"];
 	  $result[$x]["username"] = $row["username"];
@@ -251,8 +253,8 @@ function getAllChangeIDs($begin, $end) {
 }
 
 function getPreviousChange($cid, $nid, $modified) {
-  $query = db_query("SELECT cid, username, data FROM {park_changes} WHERE nid = %d AND modified < %d ORDER BY modified DESC LIMIT 1", $nid, $modified);
-  while ($row = db_fetch_array($query)) {
+  $query = db_query("SELECT cid, username, data FROM {park_changes} WHERE nid = :nid AND modified < :modified ORDER BY modified DESC LIMIT 1", array(':nid' => $nid, ':modified' => $modified));
+  while ($row = $query->fetchAssoc()) {
     $result["cid"] = $row["cid"];
 	$result["username"] = $row["username"];
     $result["data"] = unserialize($row["data"]);
@@ -347,8 +349,8 @@ function exportSpreadsheet($info, $begin, $end) {
 }
 
 function getChangedBy($user) {
-  $query = db_query("SELECT name FROM {users} WHERE uid = %d LIMIT 1", $user);
-  while ($row = db_fetch_array($query)) {
+  $query = db_query("SELECT name FROM {users} WHERE uid = :uid LIMIT 1", array(':uid' => $user));
+  while ($row = $query->fetchAssoc()) {
     $result = $row["name"];
   }
   if ($result) {
@@ -360,26 +362,26 @@ function getChangedBy($user) {
 function extractFields($info) {
   $result["Changed By"] = getChangedBy($info["user"]);
   $result["pkID"] = $info["username"];
-  $result["Status"] = $info["data"]->field_camp_status[0]["value"];
+  $result["Status"] = $info["data"]->field_camp_status[LANGUAGE_NONE][0]["value"];
   $result["Member Name"] = $info["park_name"];
   $result["Website"] = $info["data"]->field_camp_website;
-  $result["Location Address 1"] = $info["data"]->field_location[0]["street"];
-  $result["Location Address 2"] = $info["data"]->field_location[0]["additional"];
-  $result["Location City"] = $info["data"]->field_location[0]["city"];
-  $result["Location State"] = $info["data"]->field_location[0]["province"];
-  $result["Location ZIP"] = $info["data"]->field_location[0]["postal_code"];
-  $result["Location Country"] = $info["data"]->field_location[0]["country"];
-  $result["Phone"] = $info["data"]->field_camp_phone[0]["number"];
-  $result["Fax"] = $info["data"]->field_camp_faxs[0]["number"];
-  $result["Email Address"] = $info["data"]->field_camp_email[0]["email"];
+  $result["Location Address 1"] = $info["data"]->field_location[LANGUAGE_NONE][0]["street"];
+  $result["Location Address 2"] = $info["data"]->field_location[LANGUAGE_NONE][0]["additional"];
+  $result["Location City"] = $info["data"]->field_location[LANGUAGE_NONE][0]["city"];
+  $result["Location State"] = $info["data"]->field_location[LANGUAGE_NONE][0]["province"];
+  $result["Location ZIP"] = $info["data"]->field_location[LANGUAGE_NONE][0]["postal_code"];
+  $result["Location Country"] = $info["data"]->field_location[LANGUAGE_NONE][0]["country"];
+  $result["Phone"] = $info["data"]->field_camp_phone[LANGUAGE_NONE][0]["number"];
+  $result["Fax"] = $info["data"]->field_camp_faxs[LANGUAGE_NONE][0]["number"];
+  $result["Email Address"] = $info["data"]->field_camp_email[LANGUAGE_NONE][0]["email"];
   //$result["Website"] = $info["data"]->field_camp_website[0]["url"];
-  $result["Primary Contact Name"] = $info["data"]->field_park_contact_name[0]["value"];
-  $result["Billing Address 1"] = $info["data"]->field_park_billing_street[0]["value"];
-  $result["Billing Address 2"] = $info["data"]->field_park_billing_street2[0]["value"];
-  $result["Billing City"] = $info["data"]->field_park_billing_city[0]["value"];
-  $result["Billing State"] = $info["data"]->field_park_billing_state[0]["value"];
-  $result["Billing ZIP"] = $info["data"]->field_park_billing_zip[0]["value"];
-  $result["Billing Country"] = $info["data"]->field_park_billing_country[0]["value"];
+  $result["Primary Contact Name"] = $info["data"]->field_park_contact_name[LANGUAGE_NONE][0]["value"];
+  $result["Billing Address 1"] = $info["data"]->field_park_billing_street[LANGUAGE_NONE][0]["value"];
+  $result["Billing Address 2"] = $info["data"]->field_park_billing_street2[LANGUAGE_NONE][0]["value"];
+  $result["Billing City"] = $info["data"]->field_park_billing_city[LANGUAGE_NONE][0]["value"];
+  $result["Billing State"] = $info["data"]->field_park_billing_state[LANGUAGE_NONE][0]["value"];
+  $result["Billing ZIP"] = $info["data"]->field_park_billing_zip[LANGUAGE_NONE][0]["value"];
+  $result["Billing Country"] = $info["data"]->field_park_billing_country[LANGUAGE_NONE][0]["value"];
   /*
   $result["Month Open"] = $info["data"]->field_park_date_open[0]["value"];
   $result["Day Open"] = $info["data"]->field_park_date_open_day[0]["value"];
@@ -413,8 +415,8 @@ function extractFields($info) {
 }
 
 function getParkInfo($cid) {
-  $query = db_query("SELECT nid, username, park_name, modified, data, user FROM {park_changes} WHERE cid = %s LIMIT 1", $cid);
-  while ($row = db_fetch_array($query)) {
+  $query = db_query("SELECT nid, username, park_name, modified, data, user FROM {park_changes} WHERE cid = :cid LIMIT 1", array(':cid' => $cid));
+  while ($row = $query->fetchAssoc()) {
     $result["cid"] = $cid;
 	$result["nid"] = $row["nid"];
 	$result["username"] = $row["username"];
@@ -430,16 +432,16 @@ function getParkInfo($cid) {
 }
 
 function checkGCARole($user) {
-  $query = db_query("SELECT rid FROM {users_roles} WHERE uid = %d AND (rid = 6 || rid = 4)", $user);
-  while ($row = db_fetch_array($query)) {
+  $query = db_query("SELECT rid FROM {users_roles} WHERE uid = :uid AND (rid = 6 || rid = 4)", array(':uid' => $user));
+  while ($row = $query->fetchAssoc()) {
     return 1;
   }
   return 0;
 }
 
 function getParks($begin, $end) {
-  $query = db_query("SELECT cid, user FROM {park_changes} WHERE modified > %s AND modified < %s ORDER BY modified DESC", $begin, $end);
-  while ($row = db_fetch_array($query)) {
+  $query = db_query("SELECT cid, user FROM {park_changes} WHERE modified > :begin AND modified < :end ORDER BY modified DESC", array(':begin' => $begin, ':end' => $end));
+  while ($row = $query->fetchAssoc()) {
     if (checkGCARole($row["user"]) != 1) {
 	  $result[] = $row["cid"];
     }

@@ -1035,13 +1035,10 @@ function getResultAlias($nid)
   $target = "node/" . $nid;
   $query = db_query("SELECT alias FROM {url_alias} WHERE source = :src", array(":src" => $target));
   while ($row = $query->fetchObject()) {
-    $result = $row->alias;
+    return $row->alias;
   }
-  if (!$result) {
-    return $target;
-  } else {
-    return $result;
-  }
+
+  return $target;
 }
 
 function getFeaturedParks($list)
