@@ -4,6 +4,7 @@
 !*/
 !scripts/*
 !scripts/gca-search/*
+!scripts/migrations/*
 !sites/all/gca-search/*
 !sites/all/themes/gca_new_300_ad/*
 !sites/all/themes/gca_new_300_ad_home/*
