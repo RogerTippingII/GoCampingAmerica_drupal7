@@ -751,9 +751,17 @@ ul.footer-links li.light-link a {
 }
 #footer-wrapper {
   background:#6c9f14;
-  background:url("/sites/all/themes/gca_new/images/footer_wrapper_background.gif") repeat-x;
+  /*background:url("/sites/all/themes/gca_new/images/footer_wrapper_background.gif") repeat-x;*/
+  background:url("/sites/all/themes/gca_new_300_ad/images/footer_wrapper_background_leaderboard.gif") repeat-x;
   min-height:275px;
 }
+
+#footer-leaderboard {
+  width:728px;
+  height:90px;
+  margin:0 auto;
+}
+
 #copyright-wrapper {
   background:#327000;
   height:35px;
@@ -813,7 +821,9 @@ ul.footer-links li.light-link a {
 }
 
 #footer-content {
-  background:url("/sites/all/themes/gca_new_300_ad_home/images/footer_background_300_home.gif") no-repeat;
+  /*background:url("/sites/all/themes/gca_new_300_ad_home/images/footer_background_300_home.gif") no-repeat;*/
+  /*background:url("/sites/all/themes/gca_new_300_ad/images/footer_wrapper_background_leaderboard.gif") repeat-x;*/
+  background: url("/sites/all/themes/gca_new_300_ad/images/footer_background_leaderboard.gif") no-repeat;
   min-height:275px;
   color:#FFF;
   font-size:10px;
@@ -1220,3 +1230,57 @@ padding-right: 20px;
 .ad-unit {
   margin-top:10px;
 }
+
+#block-views-latest_posts-block h1 {
+  font-size: 2em;
+  line-height: 1.5385;
+  margin-top: 0 !important;
+}
+
+#block-views-latest_posts-block .views-field-body {
+  font-size: 0.9em;
+  line-height: 1.8;
+  margin: 0 0 1.8em 0;
+}
+
+.views-row {
+  padding: 10px 10px 40px;
+  clear: both;
+}
+
+.views-row-even {
+  background-color: #fff;
+  border-bottom: 1px dotted #CCC;
+  border-top: 1px dotted #CCC;
+}
+
+.views-field-title {
+  font-weight: bold;
+  font-size: 1.4em;
+}
+
+.views-field-view-node {
+  float:right;
+}
+
+.views-field-view-node, #block-views-latest_posts-block .view-footer .field-content a {
+  background:#7eb02b;
+  padding:3px 10px;
+  clear: both;
+  margin-bottom: 10px;
+  font-family: Lucida Grande, Verdana, Arial, sans-serif;
+}
+
+.views-field-view-node a, #block-views-latest_posts-block .view-footer .field-content a {
+  color: #FFF;
+}
+
+.views-field-view-node:after {
+  clear: both;
+}
+
+.views-field-field-blog-image .field-content {
+  float: left;
+  margin-right: 20px;
+}
+
