@@ -2,14 +2,16 @@
 /**
  * Sets the body-tag class attribute.
  */
-function framework_id_safe($string) {
-  // Replace with dashes anything that isn't A-Z, numbers, dashes, or underscores.
-  $string = strtolower(preg_replace('/[^a-zA-Z0-9-]+/', '-', $string));
-  // If the first character is not a-z, add 'id' in front.
-  if (!ctype_lower($string{0})) { // Don't use ctype_alpha since its locale aware.
-    $string = 'id' . $string;
+if (!function_exists('framework_id_safe')) {
+  function framework_id_safe($string) {
+    // Replace with dashes anything that isn't A-Z, numbers, dashes, or underscores.
+    $string = strtolower(preg_replace('/[^a-zA-Z0-9-]+/', '-', $string));
+    // If the first character is not a-z, add 'id' in front.
+    if (!ctype_lower($string{0})) { // Don't use ctype_alpha since its locale aware.
+      $string = 'id' . $string;
+    }
+    return $string;
   }
-  return $string;
 }
 
 /**
@@ -19,6 +21,7 @@ function framework_id_safe($string) {
  *   An array containing the breadcrumb links.
  * @return a string containing the breadcrumb output.
  */
+if (!function_exists('framework_breadcrumb')) {
 function framework_breadcrumb($breadcrumb) {
   if (!empty($breadcrumb)) {
 // uncomment the next line to enable current page in the breadcrumb trail
@@ -26,10 +29,12 @@ function framework_breadcrumb($breadcrumb) {
     return '<nav class="breadcrumb">'. implode(' » ', $breadcrumb) .'</nav>';
   }
 }
+}
 
 /**
  * Allow themable wrapping of all comments.
  */
+if (!function_exists('framework_comment_wrapper')) {
 function framework_comment_wrapper($content, $node) {
   if (!$content || $node->type == 'forum') {
     return '<section id="comments">'. $content .'</section>';
@@ -38,10 +43,12 @@ function framework_comment_wrapper($content, $node) {
     return '<section id="comments"><h2>'. t('Comments') .'</h2>'. $content .'</section>';
   }
 }
+}
 
 /**
  * Allow theming of publishing information.
  */
+if (!function_exists('framework_node_submitted')) {
 function framework_node_submitted($node) {
   return t('Published by !username on !datetime',
     array(
@@ -50,7 +57,9 @@ function framework_node_submitted($node) {
       '!fulldatetime' => format_date($node->created, 'custom', 'Y-m-d\TH:i:sZ')
     ));
 }
+}
 
+if (!function_exists('framework_comment_submitted')) {
 function framework_comment_submitted($comment) {
   return t('!username | !datetime',
     array(
@@ -59,7 +68,9 @@ function framework_comment_submitted($comment) {
       '!fulldatetime' => format_date($comment->created, 'custom', 'Y-m-d\TH:i:sZ')
     ));
 }
+}
 
+if (!function_exists('framework_menu_local_tasks')) {
 function framework_menu_local_tasks() {
   $output = '';
 
@@ -72,6 +83,7 @@ function framework_menu_local_tasks() {
 
   return $output;
 }
+}
 
 /**
  * Override or insert variables into the block templates.
@@ -81,6 +93,7 @@ function framework_menu_local_tasks() {
  * @param $hook
  *   The name of the template being rendered ("block" in this case.)
  */
+if (!function_exists('framework_preprocess_block')) {
 function framework_preprocess_block(&$vars, $hook) {
   $block = $vars['block'];
 
@@ -106,4 +119,5 @@ function framework_preprocess_block(&$vars, $hook) {
     $vars['classes_array'][] = 'with-block-editing';
   }
   $vars['edit_links'] = !empty($vars['edit_links_array']) ? '<div class="edit">' . implode(' ', $vars['edit_links_array']) . '</div>' : '';
+}
 }

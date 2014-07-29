@@ -1259,11 +1259,24 @@ padding-right: 20px;
   font-size: 1.4em;
 }
 
+#block-views-gca_updated_parks-block .views-field-title {
+  font-weight: normal;
+  font-size: 1.2308em !important;
+}
+
 .views-field-view-node {
   float:right;
 }
 
-.views-field-view-node, #block-views-latest_posts-block .view-footer .field-content a {
+#block-views-gca_updated_parks-block .views-field-view-node {
+  float: none;
+}
+
+#block-views-gca_updated_parks-block .views-field-field-camp-phone {
+  font-size: 0.8em;
+}
+
+/*.views-field-view-node,*/ #block-views-latest_posts-block .view-footer .field-content a {
   background:#7eb02b;
   padding:3px 10px;
   clear: both;
@@ -1271,11 +1284,11 @@ padding-right: 20px;
   font-family: Lucida Grande, Verdana, Arial, sans-serif;
 }
 
-.views-field-view-node a, #block-views-latest_posts-block .view-footer .field-content a {
+/*.views-field-view-node a,*/ #block-views-latest_posts-block .view-footer .field-content a {
   color: #FFF;
 }
 
-.views-field-view-node:after {
+#block-views-latest_posts-block .views-field-view-node:after {
   clear: both;
 }
 
