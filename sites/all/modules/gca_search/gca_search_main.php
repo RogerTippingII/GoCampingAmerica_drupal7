@@ -816,7 +816,7 @@ function listStateParks($stateAbbrev) {
     LEFT JOIN field_data_field_location cfl ON cfl.revision_id = node.vid
     LEFT JOIN location l ON l.lid = cfl.field_location_lid
     JOIN field_data_field_camp_status cp ON cp.revision_id = node.vid
-    WHERE node.type = 'camp' AND l.province = :state AND cp.field_camp_status_value = 'active'",
+    WHERE node.type = 'camp' AND l.province = :state AND cp.field_camp_status_value = 'active' ORDER by node.title",
     array(":state" => $stateAbbrev)
   );
 
