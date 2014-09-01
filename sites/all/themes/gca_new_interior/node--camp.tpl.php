@@ -219,7 +219,7 @@
 		      }
 			} ?>
             <div id="park-info-google-link">
-              <?php $googleString = str_replace(" ", "+", $node->field_location[LANGUAGE_NONE][0][street] . ", " . $node->field_location[0][city] . " " . $node->field_location[LANGUAGE_NONE][0][province]); ?>
+              <?php $googleString = str_replace(" ", "+", $node->field_location[LANGUAGE_NONE][0][street] . ", " . $node->field_location[LANGUAGE_NONE][0][city] . " " . $node->field_location[LANGUAGE_NONE][0][postal_code] . " " . $node->field_location[LANGUAGE_NONE][0][province]); ?>
               See map: <a href="http://www.google.com/maps?q=<?php echo $googleString; ?>&t=h&z=16" target="_blank">Google Maps</a><br />
             </div>
           </div> <!-- /#park-info-name -->
@@ -611,7 +611,8 @@ markers=color:blue%7Clabel:%7C<?php echo $node->field_location[LANGUAGE_NONE][0]
       </div> <!-- /#park-photos -->
       <div id="park-contact" class="park-tab-content<?php if ($activeTab != 'contact') { echo ' hide'; } ?>">
         <h3>Contact <?php echo $title; ?></h3><br />
-        <form method='post' action='/send-email'>
+        <!-- <form method='post' action='/send-email'> -->
+        <form method='post' action='/camp/contact_submission'>
         Your Email: <input name='email' type='text' /><br />
         <input name='subject' type='hidden' value='Contact from GoCampingAmerica.com' />
         <input name='pid' type='hidden' value='<?php echo $node->nid; ?>' />

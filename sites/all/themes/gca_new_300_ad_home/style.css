@@ -1248,6 +1248,11 @@ padding-right: 20px;
   clear: both;
 }
 
+.view-gca-updated-parks .views-row {
+  padding: 10px 8px 40px 7px;
+  clear: both;
+}
+
 .views-row-even {
   background-color: #fff;
   border-bottom: 1px dotted #CCC;

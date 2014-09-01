@@ -125,6 +125,11 @@ function array_to_scv($array, $header_row = true, $col_sep = ",", $row_sep = ";\
 		{
 			//Escaping quotes.
 			$cell_val = str_replace($qut, "$qut$qut", $cell_val);
+      
+      $cell_val = str_replace("\r\n", '', $cell_val);
+      $cell_val = str_replace("\r", '', $cell_val);
+      $cell_val = str_replace("\n", '', $cell_val);
+			
 			$tmp .= "$col_sep$qut$cell_val$qut";
 		}
 		$output .= substr($tmp, 1).$row_sep;

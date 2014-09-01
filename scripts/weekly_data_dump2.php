@@ -21,6 +21,12 @@ module_invoke('node', 'boot');
 
 require_once('scripts/PHPExcel.php');
 
+
+ini_set('display_startup_errors',1);
+ini_set('display_errors',1);
+error_reporting(-1);
+ini_set('memory_limit','999M');
+
 // EXECUTE
 
 if (isset($_REQUEST["action"]) == "dump") {
@@ -46,14 +52,16 @@ function doDataDump() {
   $x = 0;
   foreach ($allChangeIDs as $instance) {
     if (checkForChange($instance) == 1) {
-	  /*
-	  if ($instance["username"] == 9055) {
+	  
+    
+	  /*if ($instance["username"] == 67164) {
 	    echo "<pre>";
 	    print_r($instance);
 	    echo "</pre>";
-      }
-	  */
+      exit;
+    }*/
 	  
+    
 	  $semiResult[$x]["Modified"] = date("r", $instance["modified"]);
 	  $semiResult[$x]["Changed By"] = getChangedBy($instance["user"]);
       $semiResult[$x]["pkID"] = $instance["username"];
@@ -91,6 +99,18 @@ function doDataDump() {
 	    $semiResult[$x]["Location Address 1"] = "";
 	  }
 	  
+    // adding support for opening/close dates
+    if ($instance["data"]->field_location[LANGUAGE_NONE][0]["street"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["street"]) {
+	    if ($instance["data"]->field_location[LANGUAGE_NONE][0]["street"] == "") {
+		    $semiResult[$x]["Location Address 1"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["street"] . " -> " . "DELETED";
+		  } else {
+	      $semiResult[$x]["Location Address 1"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["street"] . " -> " . $instance["data"]->field_location[LANGUAGE_NONE][0]["street"];
+	    }
+	  } else {
+	    $semiResult[$x]["Location Address 1"] = "";
+	  }
+    
+    
 	  if ($instance["data"]->field_location[LANGUAGE_NONE][0]["additional"] != $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["additional"]) {
 	    if ($instance["data"]->field_location[LANGUAGE_NONE][0]["additional"] == "") {
 		  $semiResult[$x]["Location Address 2"] = $instance["previous"]["data"]->field_location[LANGUAGE_NONE][0]["additional"] . " -> " . "DELETED";
@@ -170,7 +190,7 @@ function doDataDump() {
 	  } else {
 	    $semiResult[$x]["Email Address"] = "";
 	  }
-	  
+
 	  if ($instance["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"] != $instance["previous"]["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"]) {
 	    if ($instance["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"] == "") {
 		  $semiResult[$x]["Toll-Free Number"] = $instance["previous"]["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"] .  " -> " . "DELETED";
@@ -180,11 +200,52 @@ function doDataDump() {
 	  } else {
 	    $semiResult[$x]["Toll-Free Number"] = "";
 	  }
-	  	  
+    
+    // logging date opening close 
+    if ($instance["data"]->field_park_date_open[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_park_date_open[LANGUAGE_NONE][0]["value"]) {
+      if (empty($instance["data"]->field_park_date_open) || $instance["data"]->field_park_date_open[LANGUAGE_NONE][0]["value"] == "") {
+        $semiResult[$x]["Month Open"] = $instance["previous"]["data"]->field_park_date_open[LANGUAGE_NONE][0]["value"] . " -> " . "DELETED";
+      } else {
+ 	      $semiResult[$x]["Month Open"] = $instance["previous"]["data"]->field_park_date_open[LANGUAGE_NONE][0]["value"] . " -> " . $instance["data"]->field_park_date_open[LANGUAGE_NONE][0]["value"];
+      }
+    } else {
+      $semiResult[$x]["Month Open"] = "";
+    }
+    
+    if ($instance["data"]->field_park_date_open_day[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_park_date_open_day[LANGUAGE_NONE][0]["value"]) {
+      if (empty($instance["data"]->field_park_date_open_day) || $instance["data"]->field_park_date_open_day[LANGUAGE_NONE][0]["value"] == "") {
+        $semiResult[$x]["Day Open"] = $instance["previous"]["data"]->field_park_date_open_day[LANGUAGE_NONE][0]["value"] . " -> " . "DELETED";
+      } else {
+ 	      $semiResult[$x]["Day Open"] = $instance["previous"]["data"]->field_park_date_open_day[LANGUAGE_NONE][0]["value"] . " -> " . $instance["data"]->field_park_date_open_day[LANGUAGE_NONE][0]["value"];
+      }
+    } else {
+      $semiResult[$x]["Month Open"] = "";
+    }
+    
+    if ($instance["data"]->field_park_date_closed_month[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_park_date_closed_month[LANGUAGE_NONE][0]["value"]) {
+      if (empty($instance["data"]->field_park_date_closed_month) || $instance["data"]->field_park_date_closed_month[LANGUAGE_NONE][0]["value"] == "") {
+        $semiResult[$x]["Month Closed"] = $instance["previous"]["data"]->field_park_date_closed_month[LANGUAGE_NONE][0]["value"] . " -> " . "DELETED";
+      } else {
+ 	      $semiResult[$x]["Month Closed"] = $instance["previous"]["data"]->field_park_date_closed_month[LANGUAGE_NONE][0]["value"] . " -> " . $instance["data"]->field_park_date_closed_month[LANGUAGE_NONE][0]["value"];
+      }
+    } else {
+      $semiResult[$x]["Month Closed"] = "";
+    }
+    
+    if ($instance["data"]->field_park_date_closed_day[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_park_date_closed_day[LANGUAGE_NONE][0]["value"]) {
+      if (empty($instance["data"]->field_park_date_closed_day[LANGUAGE_NONE]) || $instance["data"]->field_park_date_closed_day[LANGUAGE_NONE][0]["value"] == "") {
+        $semiResult[$x]["Day Closed"] = $instance["previous"]["data"]->field_park_date_closed_day[LANGUAGE_NONE][0]["value"] . " -> " . "DELETED";
+      } else {
+ 	      $semiResult[$x]["Day Closed"] = $instance["previous"]["data"]->field_park_date_closed_day[LANGUAGE_NONE][0]["value"] . " -> " . $instance["data"]->field_park_date_closed_day[LANGUAGE_NONE][0]["value"];
+      }
+    } else {
+      $semiResult[$x]["Day Closed"] = "";
+    }
+	  // end logging dates
+	  
 	  $x++;
 	}
   }
-  
   
   //echo "<pre>";
   //print_r($semiResult);
@@ -223,7 +284,13 @@ function checkForChange($instance) {
 	($instance["data"]->field_camp_phone[LANGUAGE_NONE][0]["number"] != $instance["previous"]["data"]->field_camp_phone[LANGUAGE_NONE][0]["number"]) ||
 	($instance["data"]->field_camp_email[LANGUAGE_NONE][0]["email"] != $instance["previous"]["data"]->field_camp_email[LANGUAGE_NONE][0]["email"]) ||
 	($instance["data"]->field_camp_status[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_camp_status[LANGUAGE_NONE][0]["value"]) ||
-	($instance["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"] != $instance["previous"]["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"])
+	($instance["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"] != $instance["previous"]["data"]->field_camp_tollfree_phone_number[LANGUAGE_NONE][0]["number"]) ||
+
+  ($instance["data"]->field_park_date_open[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_park_date_open[LANGUAGE_NONE][0]["value"]) ||
+  ($instance["data"]->field_park_date_open_day[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_park_date_open_day[LANGUAGE_NONE][0]["value"]) ||
+  ($instance["data"]->field_park_date_closed_month[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_park_date_closed_month[LANGUAGE_NONE][0]["value"]) ||
+  ($instance["data"]->field_park_date_closed_day[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_park_date_closed_day[LANGUAGE_NONE][0]["value"])  
+  
   ) {
     return 1;
   }
@@ -232,8 +299,10 @@ function checkForChange($instance) {
 
 function getAllChangeIDs($begin, $end) {
   $query = db_query("SELECT cid, username, park_name, nid, user, modified, data FROM {park_changes} WHERE modified > :begin AND modified < :end ORDER BY modified DESC", array(':begin' => $begin, ':end' => $end));
+
   $x = 0;
   while ($row = $query->fetchAssoc()) {
+    //die ('<pre>'.print_r($row,true));
     if (checkGCARole($row["user"]) != 1) {
       $result[$x]["cid"] = $row["cid"];
 	  $result[$x]["username"] = $row["username"];
@@ -246,6 +315,7 @@ function getAllChangeIDs($begin, $end) {
 	  $x++;
     }
   }
+  //die( "getAllChangeIDs");
   if (isset($result)) {
     return $result;
   }
@@ -253,16 +323,18 @@ function getAllChangeIDs($begin, $end) {
 }
 
 function getPreviousChange($cid, $nid, $modified) {
+  //die ("nid ".$nid);
   $query = db_query("SELECT cid, username, data FROM {park_changes} WHERE nid = :nid AND modified < :modified ORDER BY modified DESC LIMIT 1", array(':nid' => $nid, ':modified' => $modified));
+  //if ($nid == 94215) die( t("SELECT cid, username, data FROM {park_changes} WHERE nid = :nid AND modified < :modified ORDER BY modified DESC LIMIT 1", array(':nid' => $nid, ':modified' => $modified)));
   while ($row = $query->fetchAssoc()) {
     $result["cid"] = $row["cid"];
-	$result["username"] = $row["username"];
+    $result["username"] = $row["username"];
     $result["data"] = unserialize($row["data"]);
   }
   if (isset($result)) {
     return $result;
   }
-  return;
+  return array();;
 }
 
 function doDataDump2() {
@@ -291,7 +363,7 @@ function doDataDump2() {
 
 function exportSpreadsheet($info, $begin, $end) {
   //$headerNames = array("pkID", "Status", "Member Name", "Location Address 1", "Location Address 2", "Location City", "Location State", "Location ZIP", "Location Country", "Phone", "Fax", "Email Address", "Website", "Primary Contact Name", "Billing Address 1", "Billing Address 2", "Billing City", "Billing State", "Billing ZIP", "Billing Country", "Month Open", "Day Open", "Month Closed", "Day Closed", "Open Year-Round", "Sites Cabin", "Sites Electric_Water", "Sites Electrical", "Sites Full Hookups", "Sites No Hookups", "Sites Other", "Sites Park Model", "Sites Teepee", "Sites Tent", "Sites Total RV", "Sites Yurt", "Sites Total", "Sites Total Reported", "Company Association", "pkGuestReviewID", "State Association Name", "fkStateID");
-  $headerNames = array("Modified", "Changed By", "pkID", "Status", "Member Name", "Website",  "Location Address 1", "Location Address 2", "Location City", "Location State", "Location ZIP", "Location Country", "Phone", "Fax", "Email Address", "Toll-Free Number");
+  $headerNames = array("Modified", "Changed By", "pkID", "Status", "Member Name", "Website",  "Location Address 1", "Location Address 2", "Location City", "Location State", "Location ZIP", "Location Country", "Phone", "Fax", "Email Address", "Toll-Free Number", "Month Open", "Day Open", "Month Closed", "Day Closed");
   // Create new excel object
   $objPHPExcel = new PHPExcel();
 
@@ -382,11 +454,11 @@ function extractFields($info) {
   $result["Billing State"] = $info["data"]->field_park_billing_state[LANGUAGE_NONE][0]["value"];
   $result["Billing ZIP"] = $info["data"]->field_park_billing_zip[LANGUAGE_NONE][0]["value"];
   $result["Billing Country"] = $info["data"]->field_park_billing_country[LANGUAGE_NONE][0]["value"];
+  $result["Month Open"] = $info["data"]->field_park_date_open[LANGUAGE_NONE][0]["value"];
+  $result["Day Open"] = $info["data"]->field_park_date_open_day[LANGUAGE_NONE][0]["value"];
+  $result["Month Closed"] = $info["data"]->field_park_date_closed_month[LANGUAGE_NONE][0]["value"];
+  $result["Day Closed"] = $info["data"]->field_park_date_closed_day[LANGUAGE_NONE][0]["value"];
   /*
-  $result["Month Open"] = $info["data"]->field_park_date_open[0]["value"];
-  $result["Day Open"] = $info["data"]->field_park_date_open_day[0]["value"];
-  $result["Month Closed"] = $info["data"]->field_park_date_closed_month[0]["value"];
-  $result["Day Closed"] = $info["data"]->field_park_date_closed_day[0]["value"];
   $result["Open Year-Round"] = "";
   if ($info["data"]->field_camp_open_year_round[0]["value"] == "off") {
     $result["Open Year-Round"] = "No";
