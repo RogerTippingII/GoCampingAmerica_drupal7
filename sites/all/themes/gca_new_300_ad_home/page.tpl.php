@@ -77,6 +77,12 @@ if ($detect->isMobile()) {
   </div> <!-- /#body-wrapper -->
   <div id="footer-wrapper" class="clearfix">
     <div id="footer-content" class="clearfix">
+      <div id="footer-leaderboard">
+        <!-- <img src="/sites/all/themes/gca_new_300_ad/images/leaderboard.gif" width="728" height="90" /> -->
+        <!-- Homepage Bottom Banner [javascript] -->
+        <?php print render($page['leaderboard']); ?>
+      </div> <!-- /footer-leaderboard -->
+
       <div id="footer-left"><?php if ($page['footerLeft']): print render($page['footerLeft']); endif; ?></div> <!-- /#footer-left -->
       <div id="footer-right"><?php if ($page['footerRight']): print render($page['footerRight']); endif; ?></div> <!-- /#footer-right --><!-- /#footer-right -->
     </div>  <!-- /#footer-content -->

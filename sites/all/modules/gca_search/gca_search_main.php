@@ -423,7 +423,8 @@ setPageTitle("Find a Park Using Our Campground Search"); ?>
     echo "</td><td valign='top'>";
     for ($i = $colLimit; $i < count($featuredParks); $i++) {
       echo "<p><b><a href='/" . getResultAlias($featuredParks[$i]["nid"]) . "'>" . $featuredParks[$i]["title"] . "</a></b> <span class='featured-title'>FEATURED</span><br />";
-      echo $featuredParks[$i]["city"] . ", " . $featuredParks[$i]["state"] . "</p>";
+      echo $featuredParks[$i]["city"] . ", " . $featuredParks[$i]["state"] . "<br />";
+      echo "<div style='margin-top:7px;font-weight:bold;font-size:0.9em;'>" . $featuredParks[$i]["promo"] . "</div></p>";
     }
     echo "</td></tr></tbody></table>";
     echo "</div>";
@@ -869,12 +870,12 @@ function getStateFeatured($parks) {
   $x = 0;
   foreach ($parks as $park) {
     $nodeInfo = node_load($park["nid"]);
-    if ($nodeInfo->field_park_tier[0]["value"] > 3) {
+    if ($nodeInfo->field_park_tier[LANGUAGE_NONE][0]["value"] > 3) {
       $result[$x]["nid"] = $nodeInfo->nid;
       $result[$x]["title"] = $nodeInfo->title;
-      $result[$x]["city"] = $nodeInfo->field_location[0]["city"];
-      $result[$x]["state"] = $nodeInfo->field_location[0]["province"];
-      if ($nodeInfo->field_park_tier[0]["value"] > 3) {
+      $result[$x]["city"] = $nodeInfo->field_location[LANGUAGE_NONE][0]["city"];
+      $result[$x]["state"] = $nodeInfo->field_location[LANGUAGE_NONE][0]["province"];
+      if ($nodeInfo->field_park_tier[LANGUAGE_NONE][0]["value"] > 3) {
         $result[$x]["promo"] = getPromoText($nodeInfo->nid, $nodeInfo->vid);
       }
       $x++;

@@ -17,6 +17,7 @@
   <?php print $styles; ?>
 
   <meta name="google-site-verification" content="uV16LQUNoMB-U4AaDyST8Sh3u97LAwKBS2h3yweC2x0" />
+  <meta name="description" content="The premier source for camping information on privately owned parks and campgrounds. Find the perfect park, destination ideas and traveling tips."/>
   <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Raleway:100' rel='stylesheet' type='text/css'>
   <link type="text/css" rel="stylesheet" media="all" href="/sites/all/themes/gca_new_interior/specific.css" />

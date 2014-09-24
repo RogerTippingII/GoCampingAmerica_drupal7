@@ -26,6 +26,7 @@ $query = db_query("
 
 $parks_features = array();
 foreach($query as $feature){
+  //die ("<pre>".print_r($feature,true));
   if(!isset($parks_features[$feature->nid])){
     $parks_features[$feature->nid] = array();
   }
@@ -55,15 +56,14 @@ foreach($parks_features as $park_nid => $features){
 
     if(!$exists){
       $edited = true;
-
-      echo "before";
-      var_dump($node->{$voc_field}[LANGUAGE_NONE]);
+//      var_dump($node->{$voc_field}[LANGUAGE_NONE]);
       $node->{$voc_field}[LANGUAGE_NONE][] = array("tid" => $feature->tid);
-      echo "after";
-      var_dump($node->{$voc_field}[LANGUAGE_NONE]);
+//      var_dump($node->{$voc_field}[LANGUAGE_NONE]);
     }
   }
-
+  
+//  echo "<pre>".print_r($node,true)."</pre>";
+  
   if($edited){
     node_save($node);
     $counter++;

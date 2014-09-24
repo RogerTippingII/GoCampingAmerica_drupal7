@@ -152,6 +152,7 @@ error_reporting(0);
 	  <img src="/sites/all/themes/gca_new_300_ad/images/footer_rule.gif" width="960" height="2" style="padding:20px 20px 20px 20px;" />
 	  <div id="footer-leaderboard">
 	    <!-- <img src="/sites/all/themes/gca_new_300_ad/images/leaderboard.gif" width="728" height="90" /> -->
+
 		<?php print render($page['leaderboard']); ?>
 	  </div> <!-- /footer-leaderboard -->
       <div id="footer-left"><?php if ($page['footerLeft']): print render($page['footerLeft']); endif; ?></div> <!-- /#footer-left -->
