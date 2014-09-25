@@ -99,6 +99,10 @@ if (!$olCode) {
   $olCode = "l";
 }
 
+if (trim($_REQUEST['l']) == "") {
+  $olCode = "p";
+}
+
 if (isset($_REQUEST['r'])) {
   $radius = preg_replace("/[^0-9\s]/", "", $_REQUEST['r']);
   // Adjust Google Maps zoom level depending on the specified radius
@@ -324,10 +328,13 @@ function getParksGeo($loc, $radius, $optin, $testing)
 						( 3959 * acos( cos( radians(" . $loc[1] . ") ) * cos( radians( l.latitude ) ) * cos( radians( l.longitude ) - radians(" . $loc[0] . ") ) + sin( radians(" . $loc[1] . ") ) * sin( radians( l.latitude ) ) ) ) AS distance
 					FROM {location} l, 
 						{location_instance} li,
-						{node} n
+						{node} n,
+            {field_data_field_camp_status} s
 					WHERE l.lid = li.lid
 						AND li.vid = n.vid
-						AND n.type = 'camp' 
+						AND n.type = 'camp'
+            AND n.nid = s.entity_id
+            AND s.field_camp_status_value != 'inactive'
 						AND n.status = 1 
 					HAVING distance < " . $radius . $orderBy;
 
@@ -381,7 +388,7 @@ function getParksGeo($loc, $radius, $optin, $testing)
 
 function getPromoText($nid, $vid)
 {
-  $query = db_query("SELECT field_camp_promo_text_value FROM {content_type_camp} WHERE nid = :nid AND vid = :vid LIMIT 1", array(':nid' => $nid, ':vid' => $vid));
+  $query = db_query("SELECT field_camp_promo_text_value FROM {field_data_field_camp_promo_text} WHERE entity_id = :nid", array(':nid' => $nid));
   //while ($row = db_fetch_array($query)) {
   foreach($query as $row) {
     $result = $row->field_camp_promo_text_value;
@@ -1035,10 +1042,13 @@ function getResultAlias($nid)
   $target = "node/" . $nid;
   $query = db_query("SELECT alias FROM {url_alias} WHERE source = :src", array(":src" => $target));
   while ($row = $query->fetchObject()) {
-    return $row->alias;
+    $result = $row->alias;
   }
-
-  return $target;
+  if (!$result) {
+    return $target;
+  } else {
+    return $result;
+  }
 }
 
 function getFeaturedParks($list)
