@@ -60,11 +60,10 @@ function doDataDump() {
 	    echo "</pre>";
       exit;
     }*/
-	  
-    
+   
 	  $semiResult[$x]["Modified"] = date("r", $instance["modified"]);
 	  $semiResult[$x]["Changed By"] = getChangedBy($instance["user"]);
-      $semiResult[$x]["pkID"] = $instance["username"];
+    $semiResult[$x]["pkID"] = $instance["username"];
 
 	  if ($instance["data"]->field_camp_status[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_camp_status[LANGUAGE_NONE][0]["value"]) {
 	    $semiResult[$x]["Status"] = $instance["previous"]["data"]->field_camp_status[LANGUAGE_NONE][0]["value"] . " -> " . $instance["data"]->field_camp_status[LANGUAGE_NONE][0]["value"];
@@ -219,7 +218,7 @@ function doDataDump() {
  	      $semiResult[$x]["Day Open"] = $instance["previous"]["data"]->field_park_date_open_day[LANGUAGE_NONE][0]["value"] . " -> " . $instance["data"]->field_park_date_open_day[LANGUAGE_NONE][0]["value"];
       }
     } else {
-      $semiResult[$x]["Month Open"] = "";
+      $semiResult[$x]["Day Open"] = "";
     }
     
     if ($instance["data"]->field_park_date_closed_month[LANGUAGE_NONE][0]["value"] != $instance["previous"]["data"]->field_park_date_closed_month[LANGUAGE_NONE][0]["value"]) {
