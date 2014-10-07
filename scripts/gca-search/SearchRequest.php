@@ -20,7 +20,7 @@ switch($_REQUEST["type"]){
 
   case "park_name":
     $params = json_decode($_REQUEST["params"], true);
-    $parks = ParkSearchCtrl::SearchByParkName($params["park_name"], $params["state_short"]);
+    $parks = ParkSearchCtrl::SearchByParkName($params["park_name"], $params["state_short"], $params["tags"]);
 
     SendHttpResponse(200, json_encode($parks));
     return;

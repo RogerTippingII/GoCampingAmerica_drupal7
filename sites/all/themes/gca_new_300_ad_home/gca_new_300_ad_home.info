@@ -14,6 +14,7 @@ regions[headerRight] = Header right
 regions[content] = Content
 regions[navigation] = Navigation
 regions[footer] = Footer
+regions[leaderboard] = Leaderboard
 regions[footerLeft] = Footer left
 regions[footerRight] = Footer right
 regions[highlight] = Highlight
