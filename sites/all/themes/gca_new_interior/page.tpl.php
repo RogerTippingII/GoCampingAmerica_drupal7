@@ -68,7 +68,7 @@
     <div id="footer-content" class="clearfix">
 	  <img src="/sites/all/themes/gca_new_300_ad/images/footer_rule.gif" width="960" height="2" style="padding:20px 20px 20px 20px;" />
 	  <div id="footer-leaderboard">
-		<?php print render($page["leaderboard"]); ?>Nthem
+		<?php print render($page["leaderboard"]); ?>
 	  </div> <!-- /footer-leaderboard -->
       <div id="footer-left"><?php if ($page['footerLeft']): print render($page['footerLeft']); endif; ?></div> <!-- /#footer-left -->
       <div id="footer-right"><?php if ($page['footerRight']): print render($page['footerRight']); endif; ?></div> <!-- /#footer-right -->

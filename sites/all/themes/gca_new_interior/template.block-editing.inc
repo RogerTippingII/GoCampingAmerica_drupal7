@@ -18,7 +18,7 @@ function framework_preprocess_block_editing(&$vars, $hook) {
 
   // Display 'edit block' for custom blocks.
   if ($block->module == 'block') {
-    $vars['edit_links_array']['block-edit'] = l('<span>' . t('edit block') . '</span>', 'admin/build/block/configure/' . $block->module . '/' . $block->delta,
+    $vars['edit_links_array']['block-edit'] = l('<span>' . t('edit block') . '</span>', 'admin/structure/block/manage/block/' . $block->delta . '/configure',
       array(
         'attributes' => array(
           'title' => t('edit the content of this block'),
