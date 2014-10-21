@@ -510,8 +510,9 @@ markers=color:blue%7Clabel:%7C<?php echo $node->field_location[0][latitude] ?>,<
               $paddingTop = floor((420 - $height) / 2);
             }
             echo "<img src='/" . $node->field_camp_slideshow[$i][filepath] . "' style='padding-top:" . $paddingTop . "px;margin:0 auto;' width='" . $width . "' height='" . $height . "' /><br />";
-			if ($node->field_camp_slideshow[$i]["data"]["alt"]) {
-			  echo $node->field_camp_slideshow[$i]["data"]["alt"] . "<br clear='all' />";
+			
+      if ($node->field_camp_slideshow[$i]["alt"]) {
+			  echo $node->field_camp_slideshow[$i]["alt"] . "<br clear='all' />";
             }
 			echo "<br clear='all' /></div>";
             echo "<img src='/sites/all/themes/gca_new_interior/images/photo_next.gif' style='float:left;margin:175px 0 0 20px;' class='photo-arrow' rel='#photo-";
