@@ -233,6 +233,17 @@ markers=color:blue%7Clabel:%7C<?php echo $node->field_location[LANGUAGE_NONE][0]
 		    <?php if ($nodeInfo->field_planit_green[LANGUAGE_NONE][0]["value"] == "yes") { ?>
 		    <div id="planit-green"><a href="/plan-it-green"><img src="/sites/all/themes/gca_new_interior/images/ARVC-Plan-ItGreen-Badge.gif" width="90" height="33" alt="Plan-It Green Friendly Park" /></a></div>
 			<?php }
+        if ($nodeInfo->field_superior_quality_staff[LANGUAGE_NONE][0]["value"] == "yes") { ?>
+		    <div id="planit-green"><a href="/superior-quality-staff"><img src="/sites/all/themes/gca_new_interior/images/ARVC-superior-quality-park-badge.png" width="90" height="33" alt="ARVC superior quality park" /></a></div>
+			<?php } ?>
+
+      <?php if($nodeInfo->nid == 95013 || $nodeInfo->nid == 94458): ?>
+        <div id="planit-green">
+          <img src="/sites/all/themes/gca_new_interior/images/visit-florida-grant-logo.jpg" width="150" height="70" alt="Florida grant"/>
+        </div>
+      <? endif; ?>
+
+      <?php
             echo "<div id='park-description'>" . $node->field_park_description[LANGUAGE_NONE][0]["safe_value"] . "</div>";
 			if ($node->field_camp_directions[LANGUAGE_NONE][0]["safe_value"]) {
 			  echo "<div id='park-directions'><b>Directions:</b> " . $node->field_camp_directions[LANGUAGE_NONE][0]["safe_value"] . "</div>";
@@ -614,7 +625,7 @@ markers=color:blue%7Clabel:%7C<?php echo $node->field_location[LANGUAGE_NONE][0]
         <!-- <form method='post' action='/send-email'> -->
         <form method='post' action='/camp/contact_submission'>
         Your Email: <input name='email' type='text' /><br />
-        <input name='subject' type='hidden' value='Contact from GoCampingAmerica.com' />
+        <input name='subject' type='hidden' value='Contact from GoCampingAmerica.com (<?php echo $title; ?>)' />
         <input name='pid' type='hidden' value='<?php echo $node->nid; ?>' />
         Message:<br />
         <textarea name='message' rows='15' cols='40'>

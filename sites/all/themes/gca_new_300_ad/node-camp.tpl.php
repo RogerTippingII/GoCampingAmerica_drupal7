@@ -532,7 +532,7 @@ markers=color:blue%7Clabel:%7C<?php echo $node->field_location[0][latitude] ?>,<
         <h3>Contact <?php echo $title; ?></h3><br />
         <form method='post' action='/send-email'>
         Your Email: <input name='email' type='text' /><br />
-        <input name='subject' type='hidden' value='Contact from GoCampingAmerica.com' />
+        <input name='subject' type='hidden' value='Contact from GoCampingAmerica.com (<?php echo $title; ?>)' />
         <input name='pid' type='hidden' value='<?php echo $node->nid; ?>' />
         Message:<br />
         <textarea name='message' rows='15' cols='40'>
