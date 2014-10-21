@@ -1,0 +1,133 @@
+<?php
+
+/**
+ * @file
+ * Provides functionality to search the node content screen.
+ */
+
+/**
+ * Implements hook_menu() for park contact.
+ */
+function gca_form_cleanups_menu() {
+  $items = array();
+  $items['camp/contact_submission'] = array(
+    'page callback' => '_gca_form_cleanups_email_to_camp',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+ 
+/**
+ * Implements hook_form_FORM_ID_alter() for park form.
+ */
+function gca_form_cleanups_form_camp_node_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+
+  /*$counter = 0;
+  //--- patch for switching terms ---
+  if (arg(1) == 109941) {
+  $nodesids = taxonomy_select_nodes(2521, $pager = FALSE, $limit = FALSE);
+  //die ("<pre>".print_r($nodesids,true));
+  foreach( $nodesids as $id => $nid) {
+  //print $nid."<br>";
+
+
+    if ($user->uid == 7510) {
+      $nodeaux = node_load($nid);
+      foreach ($nodeaux->taxonomy_vocabulary_17['und'] as $index => $tid) {
+        if ($tid['tid'] == 2521) {
+          unset($nodeaux->taxonomy_vocabulary_17['und'][$index]);
+          $nodeaux->taxonomy_vocabulary_18['und'][] = array('tid' => 2521);
+          $counter++;
+        }
+      }
+      node_save($nodeaux);
+    }
+
+  }
+  echo $counter;
+  }*/
+  /*
+  if ($user->uid == 7510) {
+    $type = "camp";
+    $nids = array(108436,108451,93115,90108,89961,108379,92668,90414,95154,91076,92827,90848,91015,90265,93120,92698,108867,90867,93467,90262,92263,92271,91939,89969,90824,93002,92703,92584,91230,93505,91016,90481,92755,92673,89974,108872,93040,92460,108887,92702,95103,90894,90311,92291,91557,92055,90486,94653,92579,90856,92797,93181,90342,91908,91749,109383,109332,109326,109325,109320,109317,109314,109312,109292,109289,109282,109277,109274,109074,109016,108927,108926,108925,108924,108921,108920,108916,108915,108913,108912,108911,108910,108909,108906,108904,108903,108900,108899,108895,108894,108893,108892,108890,108883,108881,108880,108879,108878,108877,108876,108875,108869,108864,108862,108861,108858,108857,108511,108508,108507,108501,108502,108503,108497,108498,108499,108500,108495,108496,108488,108489,108490,108492,108487,108485,108481,108482,108483,108478,108479,108474,108476,108468,108469,108470,108472,108465,108467,108460,108458,108457,108452,108453,108455,108448,108449,108450,108442,108437,108438,108439,108432,108434,108435,108430,108431,108424,108425,108428,108420,108421,108418,108419,108412,108415,108408,108409,108410,108411,108404,108403,108397,108398,108399,108394,108395,108388,108389,108384,108385,108381,108383,108377,108378,108371,108369,108370,108360,108361,108356,108358,108352,108350,108153,108137,108132,108133,108126,108125,91148,91149,91143,91140,91142,91135,91119,91116,91118,91112,91113,91110,91106,91103,91098,91099,91094,91095,91091,91093,91084,91086,91083,91078,91077,91072,91065,91067,91058,91049,91047,91044,91038,91033,91031,91032,91029,91025,91026,91020,91011,91013,91009,91010,91005,91007,91001,91000,90988,90977,90972,90969,90964,90959,90960,90955,90954,90949,90945,90941,90937,90934,90930,90929,90923,90924,90915,90911,90913,90914,90905,90903,90902,90899,90900,90890,90893,90887,90883,90877,90874,90865,90866,90863,90860,90858,90857,90853,90854,90855,90851,90849,90845,90843,90839,90837,90836,90828,90829,90827,90820);
+    
+    foreach($nids as $id => $nid) {
+      $nodeaux = node_load($nid);
+      //die("<pre>".print_r($nodeaux->field_camp_guestreview_id[LANGUAGE_NONE][0],true)."</pre>");
+      //if a campground has review but check box is not checked clear the review id
+      if ($nodeaux->field_camp_guestreview_id[LANGUAGE_NONE][0]['value'] != "" && $nodeaux->field_park_guest_reviews_optin[LANGUAGE_NONE][0]['value'] == 0) {
+        $nodeaux->field_camp_guestreview_id[LANGUAGE_NONE][0]['value'] == "";
+        $nodeaux->field_camp_guestreview_id[LANGUAGE_NONE][0]['safe_value'] == "";
+        node_save($nodeaux);
+        drupal_set_message("node $nid saved");
+      }
+      //If the campground doesn't have an id, make sure the checkbox reflects a "no" in the data dump.
+    }
+  }
+  */
+  // remove email required when editing, not creating
+  $is_new_node = $form['nid']['#value'] ? false : true;
+
+  if (!$is_new_node) { 
+    if(isset($form['field_camp_email'][LANGUAGE_NONE]['#required'])) $form['field_camp_email'][LANGUAGE_NONE]['#required'] = 0;
+    if(isset($form['field_camp_email'][LANGUAGE_NONE][0]['#required'])) $form['field_camp_email'][LANGUAGE_NONE][0]['#required'] = FALSE;
+    if(isset($form['field_camp_email'][LANGUAGE_NONE][0]['email']['#required'])) $form['field_camp_email'][LANGUAGE_NONE][0]['email']['#required'] = FALSE;
+
+    // fixes bug on Drupal ajax methods
+    $val = strpos($form['redirect']['actions']['#links']['add']['query']['destination'], "?q=views/ajax");
+    if ($val) {
+      $form['#action'] = "../../".substr($form['redirect']['actions']['#links']['add']['query']['destination'], 0, $val);
+      $form['redirect']['actions']['#links']['add']['query']['destination'] = "./".substr($form['redirect']['actions']['#links']['add']['query']['destination'], 0, $val); 
+    }
+  }
+
+  if (in_array('park owner', array_values($user->roles)) || in_array('state', array_values($user->roles))) {
+    unset($form['field_park_official_optin']);
+    unset($form['taxonomyextra']);
+    unset($form['taxonomy_vocabulary_12']);
+    unset($form['revision_information']);
+    unset($form['#fieldgroups']['group_discounts']);
+    unset($form['#fieldgroups']['group_associations']);
+    $form['field_park_tier']['#access'] = FALSE;
+    $form['field_park_tier_expiration']['#access'] = FALSE;
+    $form['field_camp_gorving_enddate']['#access'] = FALSE;    
+    unset($form['#fieldgroups']['group_administrative']);
+    unset($form['print']);
+    $form['field_camp_primary_contactid']['#disabled'] = TRUE;
+    $form['field_camp_lagacy_id']['#disabled'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for park form.
+ */
+function _gca_form_cleanups_email_to_camp() {
+  if (isset($_REQUEST["pid"])) {
+    require($_SERVER["DOCUMENT_ROOT"] . '/scripts/recaptchalib.php');
+    $privatekey = "6Lc0ss4SAAAAAH4oL4YZl4eqNsper2fs75-2n4Kj";
+    $resp = recaptcha_check_answer ($privatekey,
+                                $_SERVER["REMOTE_ADDR"],
+                                $_POST["recaptcha_challenge_field"],
+                                $_POST["recaptcha_response_field"]);
+
+    if (!$resp->is_valid) {
+      // What happens when the CAPTCHA was entered incorrectly
+      drupal_set_message ("The reCAPTCHA wasn't entered correctly. Go back and try it again." .
+           "(reCAPTCHA said: " . $resp->error . ")", 'error');
+      drupal_goto('/node/'.$_REQUEST["pid"], array('query' => array('tab' => 'contact')));
+    } else {
+      $nodeinfo = node_load($_REQUEST["pid"]);
+      $email = $_REQUEST['email'] ;
+      $subject = $_REQUEST['subject'] ;
+      $message = $_REQUEST['message'] ;
+      mail($nodeinfo->field_camp_email[LANGUAGE_NONE][0]['email'], "Subject: $subject", $message, "From: $email" );
+      drupal_set_message("<h3>Your email has been sent successfully</h3>");
+      drupal_goto('/node/'.$_REQUEST["pid"], array('query' => array('title' => $nodeinfo->title, 'nid' => $nodeinfo->nid )));
+    }
+  } else {
+    drupal_set_message("There was an error sending the email. Please go back and try again", 'error');
+    drupal_goto('/node/'.$_REQUEST["pid"]);
+  }
+}
